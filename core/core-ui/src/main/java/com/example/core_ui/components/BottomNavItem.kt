@@ -1,17 +1,20 @@
 package com.example.core_ui.components
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.List
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.ui.graphics.vector.ImageVector
+import com.example.core_ui.R
 
 sealed class BottomNavItem(
     val route: String,
     val title: String,
-    val icon: ImageVector
+    val icon: Int
 ) {
-    object Home : BottomNavItem("home", "Home", Icons.Default.Home)
-    object Classes : BottomNavItem("classes", "Classes", Icons.Default.List)
-    object Profile : BottomNavItem("profile", "Profile", Icons.Default.Person)
+    object Home : BottomNavItem("home", "Home", R.drawable.baseline_home_24)
+    object Classes : BottomNavItem("classes", "Classes", R.drawable.classes_icon)
+    object Add : BottomNavItem("add", "Add", R.drawable.add_icon)
+    object Students : BottomNavItem("students", "Students", R.drawable.students_icon)
+    object Fee : BottomNavItem("fee", "Fee", R.drawable.fee_icon)
+
 }
+
+
+
+

@@ -7,6 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.core_ui.SumanjeetScreen
 import com.example.core_ui.components.BottomNavItem
 
 @Composable
@@ -19,8 +20,11 @@ fun GurukulNavGraph(
         startDestination = BottomNavItem.Home.route,
         modifier = Modifier.padding(padding)
     ) {
-        composable(BottomNavItem.Home.route) {  }
+        composable(BottomNavItem.Home.route) { SumanjeetScreen() }
         composable(BottomNavItem.Classes.route) {  }
-        composable(BottomNavItem.Profile.route) {  }
+        composable(BottomNavItem.Add.route) {  }
+        composable(BottomNavItem.Students.route) {  }
+        composable(BottomNavItem.Fee.route) {  }
     }
+
 }
