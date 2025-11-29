@@ -1,4 +1,4 @@
-package com.example.gurukul.ui.theme
+package com.example.core_ui.theme
 
 import android.app.Activity
 import android.os.Build

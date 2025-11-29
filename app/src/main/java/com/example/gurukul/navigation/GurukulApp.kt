@@ -1,7 +1,7 @@
-package com.example.gurukul.ui.theme
+package com.example.gurukul.navigation
 
 import androidx.compose.runtime.Composable
-import com.example.gurukul.navigation.GurukulMainScreen
+import com.example.core_ui.theme.GurukulTheme
 
 @Composable
 fun GurukulApp() {
