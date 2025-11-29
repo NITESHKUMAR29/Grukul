@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "22428362692",
+    "project_id": "gurukul-93f53",
+    "storage_bucket": "gurukul-93f53.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:22428362692:android:2b098dbc4117fbab8ce691",
+        "android_client_info": {
+          "package_name": "com.example.gurukul"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBhrWybkc3IfZ-FQtMa-GIJU98UrVY4LiA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
