@@ -9,6 +9,9 @@ object RootRoutes {
 object AuthRoutes {
     const val LOGIN = "login"
     const val REGISTER = "register"
+    const val PHONE_INPUT= "phone_input"
+    const val NAME_INPUT= "name_input"
+    const val OTP_INPUT= "otp_input"
     const val SELECT_ROLE = "select_role"
 }
 

@@ -1,11 +1,10 @@
 package com.example.gurukul.navigation
 
-import android.widget.Toast
+import android.util.Log
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -14,6 +13,9 @@ import com.example.core_ui.SumanjeetScreen
 import com.example.core_ui.components.BottomNavItem
 import com.example.core_ui.ui.toast.ToastState
 import com.example.core_ui.ui.toast.ToastType
+import com.example.feature_auth.presentation.NameInputScreen
+import com.example.feature_auth.presentation.OtpScreen
+import com.example.feature_auth.presentation.PhoneInputScreen
 import com.example.feature_auth.presentation.SelectRoleScreen
 import com.example.gurukul.splash.SplashScreen
 
@@ -41,26 +43,38 @@ fun GurukulNavGraph(
         ) {
             composable(AuthRoutes.SELECT_ROLE) {
 
-                val context = LocalContext.current
 
                 SelectRoleScreen(
                     onTeacherClick = {
                         toastState.show("Teacher clicked", ToastType.SUCCESS)
-
-
-                        navController.navigate(RootRoutes.MAIN_GRAPH) {
-                            popUpTo(RootRoutes.AUTH_GRAPH) { inclusive = true }
-                        }
+                        navController.navigate(AuthRoutes.PHONE_INPUT)
                     },
 
                     onStudentClick = {
-                        Toast.makeText(context, "Student clicked", Toast.LENGTH_SHORT).show()
-
                         navController.navigate(RootRoutes.MAIN_GRAPH) {
                             popUpTo(RootRoutes.AUTH_GRAPH) { inclusive = true }
                         }
                     }
                 )
+            }
+
+            composable(AuthRoutes.PHONE_INPUT) {
+                PhoneInputScreen(onContinueClick = { navController.navigate(AuthRoutes.OTP_INPUT) })
+            }
+
+            composable(AuthRoutes.NAME_INPUT) {
+                NameInputScreen(onContinueClick = {
+                    navController.navigate(RootRoutes.MAIN_GRAPH) {
+                        popUpTo(
+                            RootRoutes.AUTH_GRAPH
+                        ) { inclusive = true }
+                    }
+                })
+            }
+
+            composable(AuthRoutes.OTP_INPUT) {
+                Log.d("OTP_INPUT", "OTP_INPUT")
+                OtpScreen(onOtpVerified = { navController.navigate(AuthRoutes.NAME_INPUT) })
             }
 //            composable(AuthRoutes.Login) {
 //                LoginScreen(navController)   // implement this

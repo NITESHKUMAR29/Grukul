@@ -73,8 +73,8 @@ val CardBackground = Color(0xFFFFFFFF)
 // GRADIENT COLORS
 // ----------------------------------------------------------------------------
 
-val BlueGradientStart = Color(0xFF1349E5)
-val BlueGradientEnd   = Color(0xFF0A36C3)
+val BlueGradientStart = Color(0xFF3902FF)
+val BlueGradientEnd   = Color(0xFF3829FF)
 
 val TealGradientStart = Color(0xFF1F766E)
 val TealGradientEnd   = Color(0xFF109388)

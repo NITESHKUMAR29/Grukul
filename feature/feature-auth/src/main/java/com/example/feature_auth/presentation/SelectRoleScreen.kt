@@ -21,13 +21,17 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.core_ui.R
+import com.example.core_ui.components.buttons.GurukulPrimaryButton
+import com.example.core_ui.ui.theme.BlueGradientEnd
+import com.example.core_ui.ui.theme.BlueGradientStart
 import com.example.core_ui.ui.theme.CardBackground
 import com.example.core_ui.ui.theme.GurukulTheme
-import com.example.core_ui.ui.theme.TeacherPrimary
 import com.example.core_ui.ui.theme.TextInverse
 import com.example.core_ui.ui.theme.TextPrimary
 import com.example.core_ui.ui.theme.TextSecondary
@@ -52,9 +56,19 @@ fun SelectRoleScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(TeacherPrimary),
+            .background(
+                brush = Brush.linearGradient(
+                    colors = listOf(
+                        BlueGradientStart,
+                        BlueGradientEnd
+                    ),
+                    start = Offset(0f, 0f),
+                    end = Offset.Infinite
+                )
+            ),
         contentAlignment = Alignment.Center
-    ) {
+    )
+    {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -65,12 +79,14 @@ fun SelectRoleScreen(
             )
 
             Text(
-                text = "Select Role",
+                text = "Tag-Line",
                 style = MaterialTheme.typography.bodySmall,
                 color = TextInverse
             )
 
             Spacer(Modifier.height(24.dp))
+
+
 
 
             RoleCard(
