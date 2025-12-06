@@ -1,4 +1,4 @@
-package com.example.core_ui.theme
+package com.example.core_ui.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
@@ -9,6 +9,32 @@ import androidx.compose.ui.graphics.Color
 val TeacherPrimary = Color(0xFF2553EB)
 val StudentPrimary = Color(0xFF2333EA)
 val CommunityPeers = Color(0xFF4F46E5)
+
+
+
+// ----------------------------------------------------------------------------
+// TEXT COLORS
+// ----------------------------------------------------------------------------
+
+// Primary text (headings, titles, main content)
+val TextPrimary = Color(0xFF111827)   // Almost black (high contrast)
+
+// Secondary text (subtitles, labels, hints)
+val TextSecondary = Color(0xFF4B5563) // Muted gray
+
+// Tertiary / disabled text
+val TextDisabled = Color(0xFF9CA3AF)  // Light gray
+
+// Inverse text (on dark backgrounds)
+val TextInverse = Color.White
+
+// Link text
+val TextLink = TeacherPrimary
+
+
+// Optional: muted UI labels
+val TextHint = Color(0xFF6B7280)
+val TextCaption = Color(0xFF6D7280)
 
 
 // ----------------------------------------------------------------------------
@@ -72,6 +98,12 @@ val Error = DangerOverdue
 val Success = SuccessGood
 val Warning = WarningPending
 val HighlightColor = Highlight
+
+// Status-based text
+val TextSuccess = SuccessGood
+val TextWarning = WarningPending
+val TextError = DangerOverdue
+
 
 val Background = AppBackground
 val Surface = CardBackground

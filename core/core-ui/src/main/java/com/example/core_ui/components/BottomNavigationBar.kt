@@ -15,8 +15,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.example.core_ui.theme.CardBackground
-import com.example.core_ui.theme.TeacherPrimary
+import com.example.core_ui.ui.theme.CardBackground
+import com.example.core_ui.ui.theme.TeacherPrimary
 
 
 @Composable

@@ -46,10 +46,13 @@ android {
 
 dependencies {
     implementation(project(":core:core-ui"))
+    implementation(project(":feature:feature-auth"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.storage)
     implementation(libs.firebase.auth)
+    implementation(libs.androidx.hilt.navigation.compose)
+    implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.activity)

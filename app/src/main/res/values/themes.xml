@@ -2,4 +2,9 @@
 <resources>
 
     <style name="Theme.Gurukul" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <style name="Theme.Gurukul.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/white</item>
+        <item name="postSplashScreenTheme">@style/Theme.Gurukul</item>
+    </style>
 </resources>
