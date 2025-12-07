@@ -53,7 +53,8 @@ fun CustomToast(
     message: String,
     type: ToastType,
     modifier: Modifier = Modifier,
-    onDismiss: () -> Unit = {}
+    onDismiss: () -> Unit = {},
+    duration: Long = 4000
 ) {
     var visible by remember { mutableStateOf(false) }
 
@@ -69,7 +70,7 @@ fun CustomToast(
 
     LaunchedEffect(Unit) {
         visible = true
-        delay(2000)
+        delay(duration)
         visible = false
         delay(300)
         onDismiss()

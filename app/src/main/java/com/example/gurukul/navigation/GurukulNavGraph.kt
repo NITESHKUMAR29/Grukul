@@ -4,7 +4,9 @@ import android.util.Log
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -13,6 +15,7 @@ import com.example.core_ui.SumanjeetScreen
 import com.example.core_ui.components.BottomNavItem
 import com.example.core_ui.ui.toast.ToastState
 import com.example.core_ui.ui.toast.ToastType
+import com.example.feature_auth.presentation.AuthViewModel
 import com.example.feature_auth.presentation.NameInputScreen
 import com.example.feature_auth.presentation.OtpScreen
 import com.example.feature_auth.presentation.PhoneInputScreen
@@ -46,7 +49,6 @@ fun GurukulNavGraph(
 
                 SelectRoleScreen(
                     onTeacherClick = {
-                        toastState.show("Teacher clicked", ToastType.SUCCESS)
                         navController.navigate(AuthRoutes.PHONE_INPUT)
                     },
 
@@ -58,9 +60,23 @@ fun GurukulNavGraph(
                 )
             }
 
-            composable(AuthRoutes.PHONE_INPUT) {
-                PhoneInputScreen(onContinueClick = { navController.navigate(AuthRoutes.OTP_INPUT) })
+            composable(AuthRoutes.PHONE_INPUT) { entry ->
+
+                val parentEntry = remember(entry) {
+                    navController.getBackStackEntry(RootRoutes.AUTH_GRAPH)
+                }
+
+                val authViewModel = hiltViewModel<AuthViewModel>(parentEntry)
+
+                PhoneInputScreen(
+                    viewModel = authViewModel,
+                    toastState,
+                    onNavigateOtp = {
+                        navController.navigate(AuthRoutes.OTP_INPUT)
+                    }
+                )
             }
+
 
             composable(AuthRoutes.NAME_INPUT) {
                 NameInputScreen(onContinueClick = {
@@ -72,10 +88,27 @@ fun GurukulNavGraph(
                 })
             }
 
-            composable(AuthRoutes.OTP_INPUT) {
-                Log.d("OTP_INPUT", "OTP_INPUT")
-                OtpScreen(onOtpVerified = { navController.navigate(AuthRoutes.NAME_INPUT) })
+            composable(AuthRoutes.OTP_INPUT) { entry ->
+
+                val parentEntry = remember(entry) {
+                    navController.getBackStackEntry(RootRoutes.AUTH_GRAPH)
+                }
+
+                val authViewModel = hiltViewModel<AuthViewModel>(parentEntry)
+
+                OtpScreen(
+                    viewModel = authViewModel,
+                    onGoToMain = {
+                        navController.navigate(RootRoutes.MAIN_GRAPH) {
+                            popUpTo(RootRoutes.AUTH_GRAPH) { inclusive = true }
+                        }
+                    },
+                    onGoToName = {
+                        navController.navigate(AuthRoutes.NAME_INPUT)
+                    }
+                )
             }
+
 //            composable(AuthRoutes.Login) {
 //                LoginScreen(navController)   // implement this
 //            }
