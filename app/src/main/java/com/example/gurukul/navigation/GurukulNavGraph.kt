@@ -14,7 +14,6 @@ import androidx.navigation.compose.navigation
 import com.example.core_ui.SumanjeetScreen
 import com.example.core_ui.components.BottomNavItem
 import com.example.core_ui.ui.toast.ToastState
-import com.example.core_ui.ui.toast.ToastType
 import com.example.feature_auth.presentation.AuthViewModel
 import com.example.feature_auth.presentation.NameInputScreen
 import com.example.feature_auth.presentation.OtpScreen
@@ -78,14 +77,22 @@ fun GurukulNavGraph(
             }
 
 
-            composable(AuthRoutes.NAME_INPUT) {
-                NameInputScreen(onContinueClick = {
-                    navController.navigate(RootRoutes.MAIN_GRAPH) {
-                        popUpTo(
-                            RootRoutes.AUTH_GRAPH
-                        ) { inclusive = true }
+            composable(AuthRoutes.NAME_INPUT) { entry ->
+
+                val parentEntry = remember(entry) {
+                    navController.getBackStackEntry(RootRoutes.AUTH_GRAPH)
+                }
+
+                val authViewModel = hiltViewModel<AuthViewModel>(parentEntry)
+
+                NameInputScreen(
+                    viewModel = authViewModel,
+                    onContinueClick = {
+                        navController.navigate(RootRoutes.MAIN_GRAPH) {
+                            popUpTo(RootRoutes.AUTH_GRAPH) { inclusive = true }
+                        }
                     }
-                })
+                )
             }
 
             composable(AuthRoutes.OTP_INPUT) { entry ->

@@ -18,6 +18,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,24 +30,28 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.core_model.models.User
+import com.example.core_model.models.UserRole
 import com.example.core_ui.components.buttons.GurukulPrimaryButton
 import com.example.core_ui.ui.textFields.GurukulTextField
 import com.example.core_ui.ui.theme.GurukulTheme
 import com.example.feature_auth.R
 import kotlinx.coroutines.delay
 
-@Preview(showBackground = true)
-@Composable
-fun NameInputScreenPreview() {
-    GurukulTheme {
-        NameInputScreen(onContinueClick = {})
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun NameInputScreenPreview() {
+//    GurukulTheme {
+//        NameInputScreen(onContinueClick = {}, viewModel = AuthViewModel)
+//    }
+//}
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun NameInputScreen(onContinueClick: () -> Unit) {
+fun NameInputScreen(onContinueClick: () -> Unit, viewModel: AuthViewModel) {
 
+    var name by remember { mutableStateOf("") }
+    val state by viewModel.state.collectAsState()
 
 
     val pagerState = rememberPagerState(initialPage = 0) {
@@ -71,9 +76,6 @@ fun NameInputScreen(onContinueClick: () -> Unit) {
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
-        var phone by remember { mutableStateOf("") }
-
 
 
         Box(
@@ -108,16 +110,37 @@ fun NameInputScreen(onContinueClick: () -> Unit) {
         Text(text = "Enter Your Name", style = MaterialTheme.typography.bodyLarge)
         Spacer(Modifier.height(8.dp))
         GurukulTextField(
-            value = phone,
-            onValueChange = { phone = it },
+            value = name,
+            onValueChange = { name = it },
             hint = "Your full name",
-            keyboardType = KeyboardType.Phone,
+            keyboardType = KeyboardType.Text,
             modifier = Modifier.padding(horizontal = 16.dp)
         )
 
 
         Spacer(Modifier.height(8.dp))
-        GurukulPrimaryButton("Register", onClick = onContinueClick)
+        GurukulPrimaryButton(
+            text = "Register",
+            onClick = {
+                Log.d("Namesss",name)
+                if (name.isNotBlank()) {
+
+                    viewModel.saveUser(
+                        name = name,
+                        role = UserRole.TEACHER
+                    )
+                }
+            }
+        )
+
+        LaunchedEffect(state) {
+            Log.d("NameInputScreen", "State: $state")
+            if (state is AuthState.Success) {
+                viewModel.resetStateOnly()
+                onContinueClick()
+            }
+        }
+
         Spacer(Modifier.height(32.dp))
     }
 

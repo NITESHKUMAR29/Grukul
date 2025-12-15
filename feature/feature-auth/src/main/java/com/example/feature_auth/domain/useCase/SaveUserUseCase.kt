@@ -8,14 +8,11 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
-class VerifyOtpUseCase @Inject constructor(
+class SaveUserUseCase @Inject constructor(
     private val repository: AuthRepository
 ) {
-    operator fun invoke(
-        verificationId: String,
-        otp: String
-    ): Flow<ResultState<User>> {
-        return repository.verifyOtp(verificationId, otp).flowOn(Dispatchers.IO)
+    operator fun invoke(user: User): Flow<ResultState<Unit>> {
+        return repository.saveUser(user).flowOn(Dispatchers.IO)
 
     }
 }

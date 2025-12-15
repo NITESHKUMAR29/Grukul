@@ -1,23 +1,19 @@
 package com.example.feature_auth.domain.useCase
 
 import android.app.Activity
-import com.example.feature_auth.domain.AuthRepository
+import com.example.core_common.resut.ResultState
+import com.example.feature_auth.domain.repositories.AuthRepository
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class SendOtpUseCase @Inject constructor(
     private val repository: AuthRepository
 ) {
-    operator fun invoke(
-        phone: String,
-        activity: Activity,
-        onCodeSent: (String) -> Unit,
-        onError: (String) -> Unit
-    ) = repository.sendOtp(phone, activity, onCodeSent, onError)
+    operator fun invoke(phone: String): Flow<ResultState<String>> {
+        return repository.sendOtp(phone)
+    }
 
-    fun resendOtp(
-        phone: String,
-        activity: Activity,
-        onCodeSent: (String) -> Unit,
-        onError: (String) -> Unit
-    ) = repository.resendOtp(phone, activity, onCodeSent, onError)
+    fun resend(phone: String): Flow<ResultState<String>> {
+        return repository.resendOtp(phone)
+    }
 }

@@ -1,12 +1,16 @@
 package com.example.core_firebase.auth
 
 import android.app.Activity
+import com.example.core_common.resut.ResultState
 import com.example.core_model.models.User
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthOptions
 import com.google.firebase.auth.PhoneAuthProvider
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -15,65 +19,115 @@ class FirebaseAuthManager @Inject constructor(
     private val mapper: FirebaseUserMapper
 ) {
 
+    private var activity: Activity? = null
     private var resendToken: PhoneAuthProvider.ForceResendingToken? = null
 
-    fun clearSession() {
-        firebaseAuth.signOut()
-        resendToken = null
+    fun attachActivity(activity: Activity) {
+        this.activity = activity
     }
 
-
-    fun sendOtp(
-        phone: String,
-        activity: Activity,
-        onCodeSent: (String) -> Unit,
-        onError: (String) -> Unit
-    ) {
-
-        clearSession() // ✅ strong reset
-
-        val options = PhoneAuthOptions.newBuilder(firebaseAuth)
-            .setPhoneNumber(phone)
-            .setActivity(activity)
-            .setTimeout(60L, TimeUnit.SECONDS)
-            .setCallbacks(callbacks(onCodeSent, onError))
-            .build()
-
-        PhoneAuthProvider.verifyPhoneNumber(options)
+    fun detachActivity() {
+        this.activity = null
     }
 
+    fun sendOtp(phone: String): Flow<ResultState<String>> = callbackFlow {
+        val currentActivity = activity
+        if (currentActivity == null) {
+            trySend(ResultState.Error("Activity not attached"))
+            close()
+            return@callbackFlow
+        }
 
-    fun resendOtp(
-        phone: String,
-        activity: Activity,
-        onCodeSent: (String) -> Unit,
-        onError: (String) -> Unit
-    ) {
+        trySend(ResultState.Loading)
 
-        val token = resendToken
-            ?: run {
-                onError("Cannot resend yet. Try again later.")
-                return
+        val callbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+
+            override fun onVerificationFailed(e: FirebaseException) {
+                trySend(ResultState.Error(e.localizedMessage ?: "OTP failed"))
+                close()
             }
 
+            override fun onCodeSent(
+                verificationId: String,
+                token: PhoneAuthProvider.ForceResendingToken
+            ) {
+                resendToken = token
+                trySend(ResultState.Success(verificationId))
+                close()
+            }
+
+            override fun onVerificationCompleted(credential: PhoneAuthCredential) {}
+        }
+
         val options = PhoneAuthOptions.newBuilder(firebaseAuth)
             .setPhoneNumber(phone)
-            .setActivity(activity)
+            .setActivity(currentActivity)
             .setTimeout(60L, TimeUnit.SECONDS)
-            .setCallbacks(callbacks(onCodeSent, onError))
-            .setForceResendingToken(token) // ✅ reuse token
+            .setCallbacks(callbacks)
             .build()
 
         PhoneAuthProvider.verifyPhoneNumber(options)
+
+        awaitClose { }
     }
 
+    fun resendOtp(phone: String): Flow<ResultState<String>> = callbackFlow {
+        val currentActivity = activity
+        if (currentActivity == null) {
+            trySend(ResultState.Error("Activity not attached"))
+            close()
+            return@callbackFlow
+        }
+
+        val token = resendToken
+        if (token == null) {
+            trySend(ResultState.Error("Cannot resend yet"))
+            close()
+            return@callbackFlow
+        }
+
+        trySend(ResultState.Loading)
+
+        val callbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+
+            override fun onVerificationCompleted(credential: PhoneAuthCredential) {
+                // ignored
+            }
+
+            override fun onVerificationFailed(e: FirebaseException) {
+                trySend(ResultState.Error(e.localizedMessage ?: "Resend failed"))
+                close()
+            }
+
+            override fun onCodeSent(
+                verificationId: String,
+                token: PhoneAuthProvider.ForceResendingToken
+            ) {
+                resendToken = token
+                trySend(ResultState.Success(verificationId))
+                close()
+            }
+        }
+
+        val options = PhoneAuthOptions.newBuilder(firebaseAuth)
+            .setPhoneNumber(phone)
+            .setActivity(currentActivity)
+            .setTimeout(60L, TimeUnit.SECONDS)
+            .setForceResendingToken(token)
+            .setCallbacks(callbacks)   // ✅ REQUIRED
+            .build()
+
+        PhoneAuthProvider.verifyPhoneNumber(options)
+
+        awaitClose { }
+    }
 
     fun verifyOtp(
         verificationId: String,
-        otp: String,
-        onSuccess: (User) -> Unit,
-        onError: (String) -> Unit
-    ) {
+        otp: String
+    ): Flow<ResultState<User>> = callbackFlow {
+
+        trySend(ResultState.Loading)
 
         val credential = PhoneAuthProvider.getCredential(verificationId, otp)
 
@@ -81,36 +135,17 @@ class FirebaseAuthManager @Inject constructor(
             .addOnSuccessListener {
                 val user = it.user
                 if (user != null) {
-                    onSuccess(mapper.map(user))
+                    trySend(ResultState.Success(mapper.map(user)))
                 } else {
-                    onError("User mapping failed")
+                    trySend(ResultState.Error("User mapping failed"))
                 }
+                close()
             }
             .addOnFailureListener {
-                onError(it.localizedMessage ?: "Invalid OTP")
+                trySend(ResultState.Error(it.localizedMessage ?: "Invalid OTP"))
+                close()
             }
-    }
 
-
-    private fun callbacks(
-        onCodeSent: (String) -> Unit,
-        onError: (String) -> Unit
-    ) = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-
-        override fun onVerificationCompleted(credential: PhoneAuthCredential) {
-            // ✅ Ignore auto sign-in (manual flow better UX)
-        }
-
-        override fun onVerificationFailed(e: FirebaseException) {
-            onError(e.localizedMessage ?: "OTP verification failed")
-        }
-
-        override fun onCodeSent(
-            verificationId: String,
-            token: PhoneAuthProvider.ForceResendingToken
-        ) {
-            resendToken = token
-            onCodeSent(verificationId)
-        }
+        awaitClose { }
     }
 }
