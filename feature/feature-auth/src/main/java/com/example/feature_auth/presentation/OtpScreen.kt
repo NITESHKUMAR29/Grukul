@@ -71,12 +71,14 @@ fun OtpScreen(
 
         when (state) {
 
-            is AuthState.Success -> {
-                consumed = true
+            is AuthState.NewUser -> {
                 viewModel.resetStateOnly()
+                onGoToName()
+            }
 
-                val user = (state as AuthState.Success).user
-                if (user.role.name == "UNKNOWN") onGoToName() else onGoToMain()
+            is AuthState.Success -> {
+                viewModel.resetStateOnly()
+                onGoToMain()
             }
 
             is AuthState.Error -> {
@@ -103,7 +105,9 @@ fun OtpScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        Box(Modifier.fillMaxWidth().weight(1f)) {
+        Box(Modifier
+            .fillMaxWidth()
+            .weight(1f)) {
 
             HorizontalPager(state = pagerState) { page ->
                 Image(
@@ -115,7 +119,9 @@ fun OtpScreen(
             }
 
             Row(
-                Modifier.align(Alignment.BottomEnd).padding(16.dp),
+                Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(16.dp),
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 repeat(images.size) {
@@ -152,7 +158,9 @@ fun OtpScreen(
 
         Spacer(Modifier.height(20.dp))
 
-        Row(Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
+        Row(Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)) {
             Text("OTP sent to", color = TextSecondary)
             Spacer(Modifier.width(6.dp))
             Text(viewModel.phoneNumber.orEmpty(), color = TextPrimary)

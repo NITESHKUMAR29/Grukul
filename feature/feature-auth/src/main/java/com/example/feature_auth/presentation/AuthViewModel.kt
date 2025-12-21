@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.core_common.resut.ResultState
 import com.example.core_model.models.User
 import com.example.core_model.models.UserRole
+import com.example.feature_auth.domain.useCase.SaveUserIdUseCase
 import com.example.feature_auth.domain.useCase.SaveUserUseCase
 import com.example.feature_auth.domain.useCase.SendOtpUseCase
 import com.example.feature_auth.domain.useCase.VerifyOtpUseCase
@@ -21,7 +22,8 @@ class AuthViewModel @Inject constructor(
     private val sendOtpUseCase: SendOtpUseCase,
     private val verifyOtpUseCase: VerifyOtpUseCase,
     private val firebaseAuthManager: com.example.core_firebase.auth.FirebaseAuthManager,
-    private val saveUserUseCase: SaveUserUseCase
+    private val saveUserUseCase: SaveUserUseCase,
+    private val saveUserIdUseCase: SaveUserIdUseCase
 ) : ViewModel() {
 
     private var verificationId: String? = null
@@ -97,8 +99,17 @@ class AuthViewModel @Inject constructor(
                     }
 
                     is ResultState.Success -> {
-                        _state.value = AuthState.Success(result.data)
                         currentFirebaseUser = result.data
+
+                        viewModelScope.launch {
+                            saveUserIdUseCase(result.data.id)
+                        }
+
+                        if (result.data.isNewUser) {
+                            _state.value = AuthState.NewUser(result.data)
+                        } else {
+                            _state.value = AuthState.Success(result.data)
+                        }
                     }
 
                     is ResultState.Error -> {

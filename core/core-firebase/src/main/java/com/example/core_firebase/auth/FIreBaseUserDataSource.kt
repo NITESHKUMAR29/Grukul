@@ -8,8 +8,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import javax.inject.Inject
 
-
-
 class FIreBaseUserDataSource @Inject constructor(
     private val firestore: FirebaseFirestore
 ) {

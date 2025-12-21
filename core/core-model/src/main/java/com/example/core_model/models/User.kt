@@ -6,8 +6,9 @@ data class User(
     val email: String = "",
     val name: String = "",
     val profilePic: String = "",
-    val role: UserRole = UserRole.UNKNOWN
-
+    val subject: String="",
+    val role: UserRole = UserRole.UNKNOWN,
+    val isNewUser: Boolean = false
 )
 
 enum class UserRole {

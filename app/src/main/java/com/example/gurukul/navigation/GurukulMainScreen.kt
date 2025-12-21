@@ -28,7 +28,6 @@ fun GurukulMainScreen() {
     val destination by viewModel.startDestination.collectAsState()
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.destination?.route
 
     val toastState = remember { ToastState() }
 
@@ -36,7 +35,7 @@ fun GurukulMainScreen() {
         ?.any { it.route == RootRoutes.MAIN_GRAPH } == true
 
     LaunchedEffect(destination) {
-        if (destination != RootRoutes.SPLASH && currentRoute == RootRoutes.SPLASH) {
+        if (destination != RootRoutes.SPLASH) {
             navController.navigate(destination) {
                 popUpTo(RootRoutes.SPLASH) { inclusive = true }
                 launchSingleTop = true

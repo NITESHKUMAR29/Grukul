@@ -16,4 +16,6 @@ interface AuthRepository {
     fun resendOtp(phone: String): Flow<ResultState<String>>
 
     fun saveUser(user: User): Flow<ResultState<Unit>>
+
+    fun isUserLoggedIn(): Boolean
 }

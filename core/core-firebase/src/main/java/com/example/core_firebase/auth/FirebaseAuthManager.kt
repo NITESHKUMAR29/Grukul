@@ -1,6 +1,7 @@
 package com.example.core_firebase.auth
 
 import android.app.Activity
+import android.util.Log
 import com.example.core_common.resut.ResultState
 import com.example.core_model.models.User
 import com.google.firebase.FirebaseException
@@ -132,10 +133,17 @@ class FirebaseAuthManager @Inject constructor(
         val credential = PhoneAuthProvider.getCredential(verificationId, otp)
 
         firebaseAuth.signInWithCredential(credential)
-            .addOnSuccessListener {
-                val user = it.user
-                if (user != null) {
-                    trySend(ResultState.Success(mapper.map(user)))
+            .addOnSuccessListener { result ->
+
+                val firebaseUser = result.user
+                val isNew = result.additionalUserInfo?.isNewUser == true
+
+                if (firebaseUser != null) {
+                    val domainUser = mapper.map(firebaseUser).copy(
+                        isNewUser = isNew
+                    )
+
+                    trySend(ResultState.Success(domainUser))
                 } else {
                     trySend(ResultState.Error("User mapping failed"))
                 }

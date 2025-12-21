@@ -1,5 +1,6 @@
-
 package com.example.core_ui
+
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -24,7 +25,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
         text = "Hello $name!",
         modifier = modifier
     )
-
+    Log.d("userIDGet", "SumanjeetScreen: ")
 
 }
 

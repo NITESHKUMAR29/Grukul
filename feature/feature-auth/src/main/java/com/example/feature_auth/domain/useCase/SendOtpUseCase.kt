@@ -1,6 +1,6 @@
 package com.example.feature_auth.domain.useCase
 
-import android.app.Activity
+
 import com.example.core_common.resut.ResultState
 import com.example.feature_auth.domain.repositories.AuthRepository
 import kotlinx.coroutines.flow.Flow
