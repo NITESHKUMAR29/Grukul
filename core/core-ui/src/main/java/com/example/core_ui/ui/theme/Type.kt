@@ -79,7 +79,8 @@ val Typography = Typography(
     // -------- BUTTONS / LABELS --------
     labelLarge = TextStyle(
         fontFamily = PoppinsFamily,
-        fontWeight = FontWeight.SemiBold,
-        fontSize = 14.sp
+        color = TextInverse,
+        fontWeight = FontWeight.Bold,
+        fontSize = 16.sp
     )
 )

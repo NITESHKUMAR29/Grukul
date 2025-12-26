@@ -1,4 +1,4 @@
-package com.example.core_ui.components
+package com.example.core_ui.components.navigationBar
 
 import com.example.core_ui.R
 
@@ -14,7 +14,3 @@ sealed class BottomNavItem(
     object Fee : BottomNavItem("fee", "Fee", R.drawable.fee_icon)
 
 }
-
-
-
-

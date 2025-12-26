@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.compose) // Add this if available in your version catalog
+    alias(libs.plugins.kotlin.compose)
 }
 
 android {
@@ -66,6 +66,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.runtime)
+    implementation(libs.androidx.ui)
 
     // Testing
     testImplementation(libs.junit)
