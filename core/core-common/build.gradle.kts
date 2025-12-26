@@ -43,6 +43,7 @@ dependencies {
     implementation(libs.androidx.compose.runtime)
     testImplementation(libs.junit)
     implementation(libs.hilt.android)
+    kapt(libs.hilt.android.compiler)
     implementation(libs.androidx.datastore.preferences)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

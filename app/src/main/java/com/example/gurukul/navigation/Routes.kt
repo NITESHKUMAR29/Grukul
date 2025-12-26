@@ -4,6 +4,8 @@ object RootRoutes {
     const val SPLASH = "splash"
     const val AUTH_GRAPH = "auth_graph"
     const val MAIN_GRAPH = "main_graph"
+
+
 }
 
 object AuthRoutes {
@@ -18,4 +20,8 @@ object AuthRoutes {
 object MainRoutes {
     const val HOME = "home"
     const val CLASSES = "classes"
+}
+
+object FormRoutes{
+    const val FORM="form"
 }

@@ -3,7 +3,7 @@ package com.example.gurukul.splash
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.core_ui.components.BottomNavItem
+import com.example.core_ui.components.navigationBar.BottomNavItem
 import com.example.feature_auth.domain.useCase.CheckAuthStatusUseCase
 import com.example.feature_auth.presentation.SelectRoleScreen
 import com.example.gurukul.navigation.AuthRoutes

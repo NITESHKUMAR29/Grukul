@@ -12,13 +12,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.example.core_ui.SumanjeetScreen
-import com.example.core_ui.components.BottomNavItem
+import com.example.core_ui.components.navigationBar.BottomNavItem
 import com.example.core_ui.ui.toast.ToastState
 import com.example.feature_auth.presentation.AuthViewModel
 import com.example.feature_auth.presentation.NameInputScreen
 import com.example.feature_auth.presentation.OtpScreen
 import com.example.feature_auth.presentation.PhoneInputScreen
 import com.example.feature_auth.presentation.SelectRoleScreen
+import com.example.feature_home.presentation.FormScreenHost
 import com.example.gurukul.splash.SplashScreen
 
 @Composable
@@ -38,7 +39,7 @@ fun GurukulNavGraph(
             SplashScreen()
         }
 
-        // ✅ AUTH FLOW (LOGIN, REGISTER...)
+
         navigation(
             route = RootRoutes.AUTH_GRAPH,
             startDestination = AuthRoutes.LOGIN
@@ -116,16 +117,11 @@ fun GurukulNavGraph(
                 )
             }
 
-//            composable(AuthRoutes.Login) {
-//                LoginScreen(navController)   // implement this
-//            }
-//
-//            composable(AuthRoutes.Register) {
-//                RegisterScreen(navController) // implement this
-//            }
         }
 
-        // ✅ MAIN APP FLOW (BottomNav Screens)
+
+
+
         navigation(
             route = RootRoutes.MAIN_GRAPH,
             startDestination = MainRoutes.HOME
@@ -136,7 +132,14 @@ fun GurukulNavGraph(
             composable(MainRoutes.CLASSES) {
                 // ClassesScreen()
             }
-            composable(BottomNavItem.Add.route) { }
+            composable(BottomNavItem.Add.route) {
+                FormScreenHost(
+                    onBack = {
+                        Log.d("onBackClicked","onbackClicked")
+                        navController.popBackStack()
+                    }
+                )
+            }
             composable(BottomNavItem.Students.route) { }
             composable(BottomNavItem.Fee.route) { }
         }
