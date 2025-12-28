@@ -24,38 +24,28 @@ class ClassListViewModel @Inject constructor(
     private val _activeOnly = MutableStateFlow(false)
     val activeOnly = _activeOnly.asStateFlow()
 
+    private val _isRefreshing = MutableStateFlow(false)
+    val isRefreshing = _isRefreshing.asStateFlow()
+
     val classes = combine(
         observeClassesUseCase(),
         searchQuery,
         activeOnly
     ) { classes, query, activeOnly ->
-
         classes
-            .filter {
-                it.className.contains(query, ignoreCase = true)
-            }
-            .filter {
-                !activeOnly || it.isActive
-            }
+            .filter { it.className.contains(query, ignoreCase = true) }
+            .filter { !activeOnly || it.isActive }
     }.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(5_000),
         emptyList()
     )
 
-    private val _isRefreshing = MutableStateFlow(false)
-    val isRefreshing = _isRefreshing.asStateFlow()
-
     init {
-        refresh()
-    }
 
-    fun updateSearch(query: String) {
-        _searchQuery.value = query
-    }
-
-    fun toggleActiveOnly(enabled: Boolean) {
-        _activeOnly.value = enabled
+        viewModelScope.launch {
+            syncClassesUseCase()
+        }
     }
 
     fun refresh() {
@@ -65,5 +55,14 @@ class ClassListViewModel @Inject constructor(
             _isRefreshing.value = false
         }
     }
+
+    fun updateSearch(query: String) {
+        _searchQuery.value = query
+    }
+
+    fun toggleActiveOnly(enabled: Boolean) {
+        _activeOnly.value = enabled
+    }
 }
+
 

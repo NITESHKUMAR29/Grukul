@@ -21,6 +21,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.core_ui.components.navigationBar.BottomNavItem
 import com.example.core_ui.components.navigationBar.BottomNavigationBar
+import com.example.core_ui.components.toolBars.GurukulTopBar
 import com.example.core_ui.ui.toast.ToastHost
 import com.example.core_ui.ui.toast.ToastState
 import com.example.gurukul.splash.SplashViewModel
@@ -49,6 +50,12 @@ fun GurukulMainScreen() {
     val showBottomBar = currentRoute in bottomBarRoutes
 
     Scaffold(
+        topBar = {
+            if (showBottomBar) { GurukulTopBar(
+                title = "Namaste"
+            )}
+
+        },
         bottomBar = {
             if (showBottomBar) {
                 BottomNavigationBar(navController)
