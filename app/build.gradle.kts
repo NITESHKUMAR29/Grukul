@@ -48,6 +48,7 @@ dependencies {
     implementation(project(":core:core-ui"))
     implementation(project(":feature:feature-auth"))
     implementation(project(":feature:feature-home"))
+    implementation(project(":feature:feature-class"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.storage)

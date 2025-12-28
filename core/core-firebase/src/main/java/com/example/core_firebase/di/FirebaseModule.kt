@@ -1,7 +1,7 @@
 package com.example.core_firebase.di
 
 import com.example.core_firebase.auth.FirebaseAuthManager
-import com.example.core_firebase.auth.FirebaseUserMapper
+import com.example.core_firebase.firestore.user.FirebaseUserMapper
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage

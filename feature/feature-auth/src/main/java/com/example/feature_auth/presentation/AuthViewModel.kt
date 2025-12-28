@@ -4,7 +4,7 @@ import android.app.Activity
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.core_common.resut.ResultState
+import com.example.core_common.resut.UiState
 import com.example.core_model.models.User
 import com.example.core_model.models.UserRole
 import com.example.feature_auth.domain.useCase.SaveUserIdUseCase
@@ -43,18 +43,20 @@ class AuthViewModel @Inject constructor(
         viewModelScope.launch {
             sendOtpUseCase(phone).collect { result ->
                 when (result) {
-                    is ResultState.Loading -> {
+                    is UiState.Loading -> {
                         _state.value = AuthState.Loading
                     }
 
-                    is ResultState.Success -> {
+                    is UiState.Success -> {
                         verificationId = result.data
                         _state.value = AuthState.CodeSent
                     }
 
-                    is ResultState.Error -> {
+                    is UiState.Error -> {
                         _state.value = AuthState.Error(result.message)
                     }
+
+                    else -> {}
                 }
             }
         }
@@ -67,18 +69,20 @@ class AuthViewModel @Inject constructor(
         viewModelScope.launch {
             sendOtpUseCase.resend(phone).collect { result ->
                 when (result) {
-                    is ResultState.Loading -> {
+                    is UiState.Loading -> {
                         _state.value = AuthState.Loading
                     }
 
-                    is ResultState.Success -> {
+                    is UiState.Success -> {
                         verificationId = result.data
                         _state.value = AuthState.CodeSent
                     }
 
-                    is ResultState.Error -> {
+                    is UiState.Error -> {
                         _state.value = AuthState.Error(result.message)
                     }
+
+                    else -> {}
                 }
             }
         }
@@ -94,11 +98,11 @@ class AuthViewModel @Inject constructor(
         viewModelScope.launch {
             verifyOtpUseCase(id, otp).collect { result ->
                 when (result) {
-                    is ResultState.Loading -> {
+                    is UiState.Loading -> {
                         _state.value = AuthState.Loading
                     }
 
-                    is ResultState.Success -> {
+                    is UiState.Success -> {
                         currentFirebaseUser = result.data
 
                         viewModelScope.launch {
@@ -112,9 +116,11 @@ class AuthViewModel @Inject constructor(
                         }
                     }
 
-                    is ResultState.Error -> {
+                    is UiState.Error -> {
                         _state.value = AuthState.Error(result.message)
                     }
+
+                    else -> {}
                 }
             }
         }
@@ -134,15 +140,17 @@ class AuthViewModel @Inject constructor(
         viewModelScope.launch {
             saveUserUseCase(user).collect { result ->
                 when (result) {
-                    is ResultState.Loading -> {
+                    is UiState.Loading -> {
                         _state.value = AuthState.Loading
                     }
-                    is ResultState.Success -> {
+                    is UiState.Success -> {
                         _state.value = AuthState.Success(user)
                     }
-                    is ResultState.Error -> {
+                    is UiState.Error -> {
                         _state.value = AuthState.Error(result.message)
                     }
+
+                    else -> {}
                 }
             }
         }

@@ -1,7 +1,7 @@
 package com.example.feature_auth.data
 
-import com.example.core_common.resut.ResultState
-import com.example.core_firebase.auth.FIreBaseUserDataSource
+import com.example.core_common.resut.UiState
+import com.example.core_firebase.firestore.user.FIreBaseUserDataSource
 import com.example.core_firebase.auth.FirebaseAuthManager
 import com.example.core_firebase.auth.FirebaseAuthStatusDataSource
 import com.example.core_model.models.User
@@ -15,15 +15,15 @@ class AuthRepositoryImpl @Inject constructor(
     private val authStatusDataSource: FirebaseAuthStatusDataSource
 ) : AuthRepository {
 
-    override fun sendOtp(phone: String): Flow<ResultState<String>> {
+    override fun sendOtp(phone: String): Flow<UiState<String>> {
         return firebaseAuthManager.sendOtp(phone)
     }
 
-    override fun resendOtp(phone: String): Flow<ResultState<String>> {
+    override fun resendOtp(phone: String): Flow<UiState<String>> {
         return firebaseAuthManager.resendOtp(phone)
     }
 
-    override fun saveUser(user: User): Flow<ResultState<Unit>> {
+    override fun saveUser(user: User): Flow<UiState<Unit>> {
         return firebaseUserDataSource.saveUser(user)
     }
 
@@ -34,7 +34,7 @@ class AuthRepositoryImpl @Inject constructor(
     override fun verifyOtp(
         verificationId: String,
         otp: String
-    ): Flow<ResultState<User>> {
+    ): Flow<UiState<User>> {
         return firebaseAuthManager.verifyOtp(verificationId, otp)
     }
 }

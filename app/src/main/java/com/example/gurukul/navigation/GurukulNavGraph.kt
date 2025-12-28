@@ -19,6 +19,7 @@ import com.example.feature_auth.presentation.NameInputScreen
 import com.example.feature_auth.presentation.OtpScreen
 import com.example.feature_auth.presentation.PhoneInputScreen
 import com.example.feature_auth.presentation.SelectRoleScreen
+import com.example.feature_class.presentation.ClassScreen
 import com.example.feature_home.presentation.FormScreenHost
 import com.example.gurukul.splash.SplashScreen
 
@@ -42,7 +43,7 @@ fun GurukulNavGraph(
 
         navigation(
             route = RootRoutes.AUTH_GRAPH,
-            startDestination = AuthRoutes.LOGIN
+            startDestination = AuthRoutes.SELECT_ROLE
         ) {
             composable(AuthRoutes.SELECT_ROLE) {
 
@@ -119,9 +120,6 @@ fun GurukulNavGraph(
 
         }
 
-
-
-
         navigation(
             route = RootRoutes.MAIN_GRAPH,
             startDestination = MainRoutes.HOME
@@ -130,7 +128,7 @@ fun GurukulNavGraph(
                 SumanjeetScreen()
             }
             composable(MainRoutes.CLASSES) {
-                // ClassesScreen()
+                ClassScreen()
             }
             composable(BottomNavItem.Add.route) {
                 FormScreenHost(

@@ -1,8 +1,8 @@
 package com.example.core_firebase.auth
 
 import android.app.Activity
-import android.util.Log
-import com.example.core_common.resut.ResultState
+import com.example.core_common.resut.UiState
+import com.example.core_firebase.firestore.user.FirebaseUserMapper
 import com.example.core_model.models.User
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.FirebaseAuth
@@ -31,20 +31,20 @@ class FirebaseAuthManager @Inject constructor(
         this.activity = null
     }
 
-    fun sendOtp(phone: String): Flow<ResultState<String>> = callbackFlow {
+    fun sendOtp(phone: String): Flow<UiState<String>> = callbackFlow {
         val currentActivity = activity
         if (currentActivity == null) {
-            trySend(ResultState.Error("Activity not attached"))
+            trySend(UiState.Error("Activity not attached"))
             close()
             return@callbackFlow
         }
 
-        trySend(ResultState.Loading)
+        trySend(UiState.Loading)
 
         val callbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
 
             override fun onVerificationFailed(e: FirebaseException) {
-                trySend(ResultState.Error(e.localizedMessage ?: "OTP failed"))
+                trySend(UiState.Error(e.localizedMessage ?: "OTP failed"))
                 close()
             }
 
@@ -53,7 +53,7 @@ class FirebaseAuthManager @Inject constructor(
                 token: PhoneAuthProvider.ForceResendingToken
             ) {
                 resendToken = token
-                trySend(ResultState.Success(verificationId))
+                trySend(UiState.Success(verificationId))
                 close()
             }
 
@@ -72,22 +72,22 @@ class FirebaseAuthManager @Inject constructor(
         awaitClose { }
     }
 
-    fun resendOtp(phone: String): Flow<ResultState<String>> = callbackFlow {
+    fun resendOtp(phone: String): Flow<UiState<String>> = callbackFlow {
         val currentActivity = activity
         if (currentActivity == null) {
-            trySend(ResultState.Error("Activity not attached"))
+            trySend(UiState.Error("Activity not attached"))
             close()
             return@callbackFlow
         }
 
         val token = resendToken
         if (token == null) {
-            trySend(ResultState.Error("Cannot resend yet"))
+            trySend(UiState.Error("Cannot resend yet"))
             close()
             return@callbackFlow
         }
 
-        trySend(ResultState.Loading)
+        trySend(UiState.Loading)
 
         val callbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
 
@@ -96,7 +96,7 @@ class FirebaseAuthManager @Inject constructor(
             }
 
             override fun onVerificationFailed(e: FirebaseException) {
-                trySend(ResultState.Error(e.localizedMessage ?: "Resend failed"))
+                trySend(UiState.Error(e.localizedMessage ?: "Resend failed"))
                 close()
             }
 
@@ -105,7 +105,7 @@ class FirebaseAuthManager @Inject constructor(
                 token: PhoneAuthProvider.ForceResendingToken
             ) {
                 resendToken = token
-                trySend(ResultState.Success(verificationId))
+                trySend(UiState.Success(verificationId))
                 close()
             }
         }
@@ -126,9 +126,9 @@ class FirebaseAuthManager @Inject constructor(
     fun verifyOtp(
         verificationId: String,
         otp: String
-    ): Flow<ResultState<User>> = callbackFlow {
+    ): Flow<UiState<User>> = callbackFlow {
 
-        trySend(ResultState.Loading)
+        trySend(UiState.Loading)
 
         val credential = PhoneAuthProvider.getCredential(verificationId, otp)
 
@@ -143,14 +143,14 @@ class FirebaseAuthManager @Inject constructor(
                         isNewUser = isNew
                     )
 
-                    trySend(ResultState.Success(domainUser))
+                    trySend(UiState.Success(domainUser))
                 } else {
-                    trySend(ResultState.Error("User mapping failed"))
+                    trySend(UiState.Error("User mapping failed"))
                 }
                 close()
             }
             .addOnFailureListener {
-                trySend(ResultState.Error(it.localizedMessage ?: "Invalid OTP"))
+                trySend(UiState.Error(it.localizedMessage ?: "Invalid OTP"))
                 close()
             }
 

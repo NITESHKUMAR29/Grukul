@@ -1,6 +1,6 @@
-package com.example.core_firebase.auth
+package com.example.core_firebase.firestore.user
 
-import com.example.core_common.resut.ResultState
+import com.example.core_common.resut.UiState
 import com.example.core_model.models.User
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.channels.awaitClose
@@ -12,18 +12,18 @@ class FIreBaseUserDataSource @Inject constructor(
     private val firestore: FirebaseFirestore
 ) {
 
-    fun saveUser(user: User): Flow<ResultState<Unit>> = callbackFlow {
-        trySend(ResultState.Loading)
+    fun saveUser(user: User): Flow<UiState<Unit>> = callbackFlow {
+        trySend(UiState.Loading)
 
         firestore.collection("users")
             .document(user.id)
             .set(user)
             .addOnSuccessListener {
-                trySend(ResultState.Success(Unit))
+                trySend(UiState.Success(Unit))
                 close()
             }
             .addOnFailureListener {
-                trySend(ResultState.Error(it.localizedMessage ?: "Failed to save user"))
+                trySend(UiState.Error(it.localizedMessage ?: "Failed to save user"))
                 close()
             }
 

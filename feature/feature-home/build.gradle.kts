@@ -48,6 +48,7 @@ dependencies {
     implementation(project(":core:core-model"))
     implementation(project(":core:core-firebase"))
     implementation(project(":core:core-common"))
+    implementation(project(":feature:feature-class"))
     implementation(platform(libs.androidx.compose.bom))
 
     implementation(libs.androidx.core.ktx)
@@ -92,4 +93,9 @@ dependencies {
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.storage)
     implementation(libs.firebase.auth)
+
+    // Room
+    implementation(libs.room.runtime)
+    implementation(libs.room.ktx)
+    kapt(libs.room.compiler)
 }

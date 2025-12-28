@@ -1,9 +1,8 @@
-package com.example.core_firebase.auth
+package com.example.core_firebase.firestore.user
 
 import android.annotation.SuppressLint
-import com.google.firebase.auth.FirebaseUser
 import com.example.core_model.models.User
-
+import com.google.firebase.auth.FirebaseUser
 import javax.inject.Inject
 
 class FirebaseUserMapper @Inject constructor() {
