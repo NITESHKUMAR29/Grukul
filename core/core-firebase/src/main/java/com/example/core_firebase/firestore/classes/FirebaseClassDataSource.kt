@@ -26,4 +26,15 @@ class FirebaseClassDataSource @Inject constructor(
             .set(dto)
             .await()
     }
+    suspend fun softDeleteClass(id: String) {
+        firestore.collection("classes")
+            .document(id)
+            .update(
+                mapOf(
+                    "isDeleted" to true,
+                    "updatedAt" to System.currentTimeMillis()
+                )
+            )
+            .await()
+    }
 }

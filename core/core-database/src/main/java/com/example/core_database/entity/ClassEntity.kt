@@ -12,5 +12,13 @@ data class ClassEntity(
     val gender: String,
     val address: String,
     val createdBy: String,
-    val updatedAt: Long
+    val updatedAt: Long,
+    val isDeleted: Boolean = false,
+    val pendingAction: PendingAction? = null
 )
+
+enum class PendingAction {
+    DELETE,
+    CREATE,
+    UPDATE
+}

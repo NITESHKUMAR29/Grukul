@@ -20,12 +20,17 @@ class ClassRepositoryImpl @Inject constructor(
 
 
     override suspend fun createClass(classModel: ClassModel) {
-        val entity = mapper.domainToEntity(classModel)
-        val dto = remoteMapper.entityToDto(entity)
-
+        val dto = remoteMapper.entityToDto(
+            mapper.domainToEntity(classModel)
+        )
         firebaseDataSource.createClass(dto)
 
-        classDao.upsert(entity)
+    }
+
+
+    override suspend fun softDeleteClass(id: String) {
+        firebaseDataSource.softDeleteClass(id)
+
     }
 
 
@@ -36,12 +41,16 @@ class ClassRepositoryImpl @Inject constructor(
             }
     }
 
+
     override suspend fun syncClasses() {
         val remoteDtos = firebaseDataSource.fetchClasses()
-        remoteDtos.forEach {
-            Log.d("SYNC_REMOTE", "isActive from firebase = ${it.active}")
+
+        val activeDtos = remoteDtos.filter { dto ->
+            !dto.isDeleted
         }
-        val entities = remoteDtos.map(remoteMapper::dtoToEntity)
-        classDao.upsertAll(entities)
+
+        val entities = activeDtos.map(remoteMapper::dtoToEntity)
+
+        classDao.replaceAll(entities)
     }
 }

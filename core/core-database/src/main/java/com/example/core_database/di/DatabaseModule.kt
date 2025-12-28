@@ -24,7 +24,7 @@ object DatabaseModule {
             context,
             GurukulDatabase::class.java,
             "gurukul_db"
-        ).build()
+        ).fallbackToDestructiveMigration().build()
 
     @Provides
     fun provideClassDao(

@@ -8,9 +8,9 @@ interface ClassRepository {
 
     suspend fun createClass(classModel: ClassModel)
 
+    suspend fun softDeleteClass(id: String)
 
     fun observeClasses(): Flow<List<ClassModel>>
-
 
     suspend fun syncClasses()
 }

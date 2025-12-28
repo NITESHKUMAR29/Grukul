@@ -7,7 +7,7 @@ import com.example.core_database.entity.ClassEntity
 
 @Database(
     entities = [ClassEntity::class],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class GurukulDatabase : RoomDatabase() {

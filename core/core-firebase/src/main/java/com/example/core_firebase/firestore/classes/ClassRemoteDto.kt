@@ -8,5 +8,6 @@ data class ClassRemoteDto(
     val gender: String = "",
     val address: String = "",
     val createdBy: String = "",
-    val updatedAt: Long = 0L
+    val updatedAt: Long = 0L,
+    val isDeleted: Boolean = false
 )

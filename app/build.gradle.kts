@@ -46,6 +46,7 @@ android {
 
 dependencies {
     implementation(project(":core:core-ui"))
+    implementation(project(":core:core-common"))
     implementation(project(":feature:feature-auth"))
     implementation(project(":feature:feature-home"))
     implementation(project(":feature:feature-class"))
@@ -67,6 +68,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.hilt.work)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -76,4 +78,5 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     kapt(libs.hilt.android.compiler)
+    implementation(libs.androidx.work.runtime.ktx)
 }

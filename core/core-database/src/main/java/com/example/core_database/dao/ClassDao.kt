@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import com.example.core_database.entity.ClassEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -14,8 +15,14 @@ interface ClassDao {
     fun observeClasses(): Flow<List<ClassEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun upsertAll(classes: List<ClassEntity>)
+    suspend fun insertAll(list: List<ClassEntity>)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun upsert(classEntity: ClassEntity)
+    @Query("DELETE FROM classes")
+    suspend fun clearAll()
+
+    @Transaction
+    suspend fun replaceAll(list: List<ClassEntity>) {
+        clearAll()
+        insertAll(list)
+    }
 }

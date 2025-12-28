@@ -65,6 +65,8 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.foundation.layout)
     implementation(libs.androidx.ui)
+    implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.androidx.hilt.common)
 
 
     // Testing
@@ -80,6 +82,8 @@ dependencies {
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
+    implementation(libs.androidx.hilt.work)
+    kapt("androidx.hilt:hilt-compiler:1.2.0")
 
     //firebse
     implementation(libs.firebase.firestore)

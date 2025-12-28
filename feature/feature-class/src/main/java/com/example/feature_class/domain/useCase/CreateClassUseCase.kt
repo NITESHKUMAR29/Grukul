@@ -14,5 +14,6 @@ class CreateClassUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(classModel: ClassModel) {
         repository.createClass(classModel)
+        repository.syncClasses()
     }
 }
