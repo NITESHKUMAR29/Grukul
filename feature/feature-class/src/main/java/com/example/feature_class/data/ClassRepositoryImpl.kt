@@ -33,23 +33,16 @@ class ClassRepositoryImpl @Inject constructor(
     }
 
 
-    override fun observeClasses(): Flow<List<ClassModel>> {
-        return classDao.observeClasses()
-            .map { entities ->
-                entities.map(mapper::entityToDomain)
-            }
+    override fun observeClasses(createdBy: String): Flow<List<ClassModel>> {
+        return classDao.observeClassesByUser(createdBy)
+            .map { it.map(mapper::entityToDomain) }
     }
 
-
-    override suspend fun syncClasses() {
-        val remoteDtos = firebaseDataSource.fetchClasses()
-
-        val activeDtos = remoteDtos.filter { dto ->
-            !dto.isDeleted
-        }
-
+    override suspend fun syncClasses(createdBy: String) {
+        val remoteDtos = firebaseDataSource.fetchClasses(createdBy)
+        val activeDtos = remoteDtos.filter { !it.isDeleted }
         val entities = activeDtos.map(remoteMapper::dtoToEntity)
 
-        classDao.replaceAll(entities)
+        classDao.replaceAllForUser(createdBy, entities)
     }
 }

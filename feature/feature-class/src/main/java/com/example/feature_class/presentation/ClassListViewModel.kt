@@ -3,23 +3,29 @@ package com.example.feature_class.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.core_common.resut.UiState
+import com.example.feature_auth.domain.repositories.UserLocalRepository
 import com.example.feature_class.domain.models.ClassModel
 import com.example.feature_class.domain.useCase.ObserveClassesUseCase
 import com.example.feature_class.domain.useCase.SyncClassesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class ClassListViewModel @Inject constructor(
     observeClassesUseCase: ObserveClassesUseCase,
-    private val syncClassesUseCase: SyncClassesUseCase
+    private val syncClassesUseCase: SyncClassesUseCase,
+    private val userLocalRepository: UserLocalRepository
 ) : ViewModel() {
 
     enum class StatusFilter {
@@ -47,25 +53,30 @@ class ClassListViewModel @Inject constructor(
     val uiState = _uiState.asStateFlow()
 
     // -------------------- Data pipeline --------------------
+    private val createdByFlow = flow {
+        emit(userLocalRepository.observeUserId().first()
+            ?: throw IllegalStateException("User not logged in"))
+    }
+    @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
+    private val filteredClassesFlow = createdByFlow.flatMapLatest { createdBy ->
+        combine(
+            observeClassesUseCase(createdBy),
+            searchQuery.debounce(400).distinctUntilChanged(),
+            genderFilter,
+            statusFilter
+        ) { classes, query, gender, status ->
 
-    @OptIn(FlowPreview::class)
-    private val filteredClassesFlow = combine(
-        observeClassesUseCase(),
-        searchQuery.debounce(400).distinctUntilChanged(),
-        genderFilter,
-        statusFilter
-    ) { classes, query, gender, status ->
-
-        classes
-            .filter { it.className.contains(query, ignoreCase = true) }
-            .filter { gender == "ALL" || it.gender == gender }
-            .filter {
-                when (status) {
-                    StatusFilter.ALL -> true
-                    StatusFilter.ACTIVE -> it.isActive
-                    StatusFilter.INACTIVE -> !it.isActive
+            classes
+                .filter { it.className.contains(query, ignoreCase = true) }
+                .filter { gender == "ALL" || it.gender == gender }
+                .filter {
+                    when (status) {
+                        StatusFilter.ALL -> true
+                        StatusFilter.ACTIVE -> it.isActive
+                        StatusFilter.INACTIVE -> !it.isActive
+                    }
                 }
-            }
+        }
     }
 
     init {
@@ -89,7 +100,8 @@ class ClassListViewModel @Inject constructor(
         viewModelScope.launch {
             _isRefreshing.value = true
             try {
-                syncClassesUseCase()
+                val createdBy = createdByFlow.first()
+                syncClassesUseCase(createdBy)
             } finally {
                 _isRefreshing.value = false
             }
@@ -99,7 +111,8 @@ class ClassListViewModel @Inject constructor(
     private fun sync() {
         viewModelScope.launch {
             try {
-                syncClassesUseCase()
+                val createdBy = createdByFlow.first()
+                syncClassesUseCase(createdBy)
             } catch (e: Exception) {
                 _uiState.value =
                     UiState.Error(e.message ?: "Sync failed")
@@ -118,6 +131,7 @@ class ClassListViewModel @Inject constructor(
     fun selectGender(gender: String) {
         genderFilter.value = gender
     }
+
 }
 
 

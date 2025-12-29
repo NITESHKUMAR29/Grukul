@@ -6,6 +6,7 @@ import com.example.core_common.resut.UiState
 import com.example.feature_class.domain.models.ClassModel
 import com.example.feature_auth.domain.repositories.UserLocalRepository
 import com.example.feature_class.domain.useCase.CreateClassUseCase
+import com.example.feature_class.domain.useCase.SyncClassesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -17,7 +18,8 @@ import javax.inject.Inject
 @HiltViewModel
 class ClassViewModel @Inject constructor(
     private val createClassUseCase: CreateClassUseCase,
-    private val userLocalRepository: UserLocalRepository
+    private val userLocalRepository: UserLocalRepository,
+    private val syncClassesUseCase: SyncClassesUseCase
 ) : ViewModel() {
 
     private val _createClassState =
@@ -51,6 +53,7 @@ class ClassViewModel @Inject constructor(
                 )
 
                 createClassUseCase(classModel)
+                syncClassesUseCase(userId)
 
                 _createClassState.value = UiState.Success(Unit)
             } catch (e: Exception) {

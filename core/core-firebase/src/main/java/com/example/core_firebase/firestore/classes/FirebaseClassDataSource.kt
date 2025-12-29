@@ -9,8 +9,9 @@ class FirebaseClassDataSource @Inject constructor(
     private val firestore: FirebaseFirestore
 ) {
 
-    suspend fun fetchClasses(): List<ClassRemoteDto> {
+    suspend fun fetchClasses(createdBy: String): List<ClassRemoteDto> {
         return firestore.collection("classes")
+            .whereEqualTo("createdBy",createdBy)
             .get()
             .await()
             .documents

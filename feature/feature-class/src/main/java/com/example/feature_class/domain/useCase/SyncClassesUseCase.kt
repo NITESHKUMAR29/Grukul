@@ -6,7 +6,7 @@ import javax.inject.Inject
 class SyncClassesUseCase @Inject constructor(
     private val repository: ClassRepository
 ) {
-    suspend operator fun invoke() {
-        repository.syncClasses()
+    suspend operator fun invoke(createdBy: String) {
+        repository.syncClasses(createdBy)
     }
 }

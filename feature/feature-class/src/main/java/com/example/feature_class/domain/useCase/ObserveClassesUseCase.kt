@@ -8,7 +8,7 @@ import javax.inject.Inject
 class ObserveClassesUseCase @Inject constructor(
     private val repository: ClassRepository
 ) {
-    operator fun invoke(): Flow<List<ClassModel>> {
-        return repository.observeClasses()
+    operator fun invoke(createdBy: String): Flow<List<ClassModel>> {
+        return repository.observeClasses(createdBy)
     }
 }
