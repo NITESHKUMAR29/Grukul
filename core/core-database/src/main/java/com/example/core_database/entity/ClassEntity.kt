@@ -13,6 +13,7 @@ data class ClassEntity(
     val address: String,
     val createdBy: String,
     val updatedAt: Long,
+    val schedule: String,
     val isDeleted: Boolean = false,
     val pendingAction: PendingAction? = null
 )

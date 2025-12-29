@@ -9,5 +9,6 @@ data class ClassRemoteDto(
     val address: String = "",
     val createdBy: String = "",
     val updatedAt: Long = 0L,
+    val schedule: String = "",
     val isDeleted: Boolean = false
 )

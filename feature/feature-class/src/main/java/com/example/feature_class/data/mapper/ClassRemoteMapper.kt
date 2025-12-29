@@ -15,6 +15,7 @@ class ClassRemoteMapper @Inject constructor() {
             gender = dto.gender,
             address = dto.address,
             createdBy = dto.createdBy,
+            schedule = dto.schedule,
             updatedAt = dto.updatedAt
         )
 
@@ -28,6 +29,7 @@ class ClassRemoteMapper @Inject constructor() {
             address = entity.address,
             createdBy = entity.createdBy,
             updatedAt = entity.updatedAt,
+            schedule = entity.schedule,
             isDeleted = false
         )
 }

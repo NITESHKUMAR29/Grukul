@@ -1,7 +1,6 @@
 package com.example.feature_class.domain.repository
 
-import com.example.core_common.resut.UiState
-import com.example.feature_auth.domain.models.ClassModel
+import com.example.feature_class.domain.models.ClassModel
 import kotlinx.coroutines.flow.Flow
 
 interface ClassRepository {

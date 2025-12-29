@@ -1,4 +1,4 @@
-package com.example.feature_auth.domain.models
+package com.example.feature_class.domain.models
 
 data class ClassModel(
     val id: String = "",
@@ -8,5 +8,6 @@ data class ClassModel(
     val gender: String = "",
     val address: String = "",
     val createdBy: String = "",
+    val schedule: String,
     val createdAt: Long = System.currentTimeMillis()
 )

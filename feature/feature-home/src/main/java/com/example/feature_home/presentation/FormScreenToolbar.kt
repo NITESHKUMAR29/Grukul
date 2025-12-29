@@ -9,8 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -19,7 +17,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -27,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.example.core_ui.components.toggle.GurukulSegmentedToggle
 
 @Composable
 fun FormScreenToolbar(
@@ -68,26 +66,13 @@ fun FormScreenToolbar(
                 )
 
                 if (showFormToggle && currentForm != null && onFormToggle != null) {
-                    Row(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(20.dp))
-                            .background(MaterialTheme.colorScheme.surfaceVariant)
-                            .padding(2.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-
-                        FormToggleItem(
-                            text = "Class",
-                            selected = currentForm == FormType.CLASS,
-                            onClick = { onFormToggle(FormType.CLASS) }
-                        )
-
-                        FormToggleItem(
-                            text = "Student",
-                            selected = currentForm == FormType.STUDENT,
-                            onClick = { onFormToggle(FormType.STUDENT) }
-                        )
-                    }
+                    GurukulSegmentedToggle(
+                        items = listOf("CLASS", "STUDENT"),
+                        selectedItem = currentForm.name,
+                        onItemSelected = { selected ->
+                            onFormToggle(FormType.valueOf(selected))
+                        }
+                    )
                 }
 
                 actions()
@@ -102,27 +87,5 @@ fun FormScreenToolbar(
 
 
 }
-@Composable
-private fun FormToggleItem(
-    text: String,
-    selected: Boolean,
-    onClick: () -> Unit
-) {
-    Text(
-        text = text,
-        modifier = Modifier
-            .clip(RoundedCornerShape(16.dp))
-            .background(
-                if (selected) MaterialTheme.colorScheme.primary
-                else Color.Transparent
-            )
-            .clickable { onClick() }
-            .padding(horizontal = 12.dp, vertical = 6.dp),
-        color = if (selected)
-            MaterialTheme.colorScheme.onPrimary
-        else
-            MaterialTheme.colorScheme.onSurfaceVariant,
-        style = MaterialTheme.typography.labelMedium
-    )
-}
+
 

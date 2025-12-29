@@ -1,9 +1,8 @@
 package com.example.feature_class.data
 
-import android.util.Log
 import com.example.core_database.dao.ClassDao
 import com.example.core_firebase.firestore.classes.FirebaseClassDataSource
-import com.example.feature_auth.domain.models.ClassModel
+import com.example.feature_class.domain.models.ClassModel
 import com.example.feature_class.data.mapper.ClassMapper
 import com.example.feature_class.data.mapper.ClassRemoteMapper
 import com.example.feature_class.domain.repository.ClassRepository
