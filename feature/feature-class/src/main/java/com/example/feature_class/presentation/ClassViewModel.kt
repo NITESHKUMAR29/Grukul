@@ -32,7 +32,9 @@ class ClassViewModel @Inject constructor(
         isActive: Boolean,
         gender: String,
         address: String,
-        schedule: String
+        days: List<Int>,
+        startDate: Long,
+        endDate: Long
     ) {
         viewModelScope.launch {
             try {
@@ -49,7 +51,9 @@ class ClassViewModel @Inject constructor(
                     gender = gender,
                     address = address,
                     createdBy = userId,
-                    schedule = schedule
+                    days = days,
+                    startDate = startDate,
+                    endDate = endDate
                 )
 
                 createClassUseCase(classModel)

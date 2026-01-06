@@ -42,7 +42,6 @@ fun GurukulPrimaryButton(
         enabled = enabled && !loading,
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp)
             .height(48.dp),
         shape = RoundedCornerShape(12.dp),
         colors = ButtonDefaults.buttonColors(

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -34,15 +35,13 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.example.core_common.resut.UiState
-import com.example.core_ui.components.buttons.GurukulPrimaryButton
+import com.example.core_ui.components.buttons.BottomActionCard
+import com.example.core_ui.components.datePicker.GurukulDateField
 import com.example.core_ui.components.feedbackText.ErrorText
 import com.example.core_ui.components.spinners.CommonSpinner
 import com.example.core_ui.ui.textFields.GurukulTextField
 import kotlinx.coroutines.launch
 
-/* ---------------------------------------------------------
-   SCREEN
---------------------------------------------------------- */
 
 @Composable
 fun ClassFormScreen(
@@ -56,17 +55,11 @@ fun ClassFormScreen(
     var address by remember { mutableStateOf("") }
     var selectedActive by remember { mutableStateOf("Active") }
     var selectedGender by remember { mutableStateOf("Boys") }
-    var selectedDays by remember { mutableStateOf(setOf<String>()) }
+    var selectedDays by remember { mutableStateOf(setOf<Int>()) }
     var loading by remember { mutableStateOf(false) }
-    val dayMap = mapOf(
-        "Mon" to "M",
-        "Tue" to "T",
-        "Wed" to "W",
-        "Thu" to "Th",
-        "Fri" to "F",
-        "Sat" to "S",
-        "Sun" to "Su"
-    )
+    var startDate by remember { mutableStateOf<Long?>(null) }
+    var endDate by remember { mutableStateOf<Long?>(null) }
+
 
     Log.d("ClassForm", "state = $createState")
 
@@ -94,17 +87,26 @@ fun ClassFormScreen(
         selectedActive = selectedActive,
         selectedGender = selectedGender,
         selectedDays = selectedDays,
+
+        startDate = startDate,
+        endDate = endDate,
+        onStartDateChange = { startDate = it },
+        onEndDateChange = { endDate = it },
+
         onClassNameChange = { className = it },
         onTeacherNameChange = { teacherName = it },
         onAddressChange = { address = it },
         onActiveChange = { selectedActive = it },
         onGenderChange = { selectedGender = it },
+
         onDayToggle = { day ->
             selectedDays =
                 if (selectedDays.contains(day)) selectedDays - day
                 else selectedDays + day
         },
+
         loading = loading,
+
         onSubmit = {
             viewModel.createClass(
                 className = className,
@@ -112,14 +114,13 @@ fun ClassFormScreen(
                 isActive = selectedActive == "Active",
                 gender = selectedGender,
                 address = address,
-                schedule = selectedDays
-                    .map { dayMap[it] ?: it.first().uppercaseChar().toString() }
-                    .joinToString("/")
+                days = selectedDays.toList(),
+                startDate = startDate!!,
+                endDate = endDate!!
             )
         }
     )
 }
-
 
 
 @Composable
@@ -129,19 +130,31 @@ fun ClassFormContent(
     address: String,
     selectedActive: String,
     selectedGender: String,
-    selectedDays: Set<String>,
     onClassNameChange: (String) -> Unit,
     onTeacherNameChange: (String) -> Unit,
     onAddressChange: (String) -> Unit,
     onActiveChange: (String) -> Unit,
     onGenderChange: (String) -> Unit,
-    onDayToggle: (String) -> Unit,
+    selectedDays: Set<Int>,
+    onDayToggle: (Int) -> Unit,
+    startDate: Long?,
+    endDate: Long?,
+    onStartDateChange: (Long) -> Unit,
+    onEndDateChange: (Long) -> Unit,
     onSubmit: () -> Unit,
     loading: Boolean
 ) {
     val active = listOf("Active", "Inactive")
     val gender = listOf("Boys", "Girls")
-    val days = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
+    val days = listOf(
+        1 to "Mon",
+        2 to "Tue",
+        3 to "Wed",
+        4 to "Thu",
+        5 to "Fri",
+        6 to "Sat",
+        7 to "Sun"
+    )
 
 
     val scrollState = rememberScrollState()
@@ -158,13 +171,18 @@ fun ClassFormContent(
         teacherName,
         selectedActive,
         selectedGender,
-        selectedDays
+        selectedDays,
+        startDate,
+        endDate
     ) {
         className.isNotBlank() &&
                 teacherName.isNotBlank() &&
                 selectedActive.isNotBlank() &&
                 selectedGender.isNotBlank() &&
-                selectedDays.isNotEmpty()
+                selectedDays.isNotEmpty() &&
+                startDate != null &&
+                endDate != null &&
+                endDate >= startDate
     }
 
     fun scrollToFirstError() {
@@ -277,6 +295,33 @@ fun ClassFormContent(
 
             Spacer(Modifier.height(16.dp))
 
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalAlignment = Alignment.Top
+            ) {
+                GurukulDateField(
+                    label = "Start Date",
+                    dateMillis = startDate,
+                    onDateSelected = onStartDateChange,
+                    isError = showErrors && startDate == null,
+                    modifier = Modifier.weight(1f)
+                )
+
+                GurukulDateField(
+                    label = "End Date",
+                    dateMillis = endDate,
+                    minDateMillis = startDate,
+                    onDateSelected = onEndDateChange,
+                    isError = showErrors && endDate == null,
+                    modifier = Modifier.weight(1f)
+                )
+            }
+
+
+            Spacer(Modifier.height(12.dp))
 
             Text(
                 "Class Days *",
@@ -287,30 +332,30 @@ fun ClassFormContent(
                         daysY = it.positionInParent().y
                     }
             )
+            Spacer(Modifier.height(8.dp))
 
             FlowRow(
-                modifier = Modifier
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                modifier = Modifier.padding(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                days.forEach { day ->
-                    val selected = selectedDays.contains(day)
+                days.forEach { (dayIndex, label) ->
+                    val selected = selectedDays.contains(dayIndex)
 
                     Box(
                         modifier = Modifier
-                            .clip(RoundedCornerShape(24.dp))
+                            .clip(RoundedCornerShape(16.dp))
                             .background(
                                 if (selected)
                                     MaterialTheme.colorScheme.primary
                                 else
                                     MaterialTheme.colorScheme.surfaceVariant
                             )
-                            .clickable { onDayToggle(day) }
-                            .padding(horizontal = 16.dp, vertical = 10.dp)
+                            .clickable { onDayToggle(dayIndex) }
+                            .padding(horizontal = 20.dp, vertical = 8.dp)
                     ) {
                         Text(
-                            text = day,
+                            text = label,
                             style = MaterialTheme.typography.labelMedium,
                             color = if (selected)
                                 MaterialTheme.colorScheme.onPrimary
@@ -319,6 +364,7 @@ fun ClassFormContent(
                         )
                     }
                 }
+
             }
 
 
@@ -330,20 +376,19 @@ fun ClassFormContent(
             Spacer(Modifier.height(24.dp))
         }
 
-
-        GurukulPrimaryButton(
-            text = "Submit",
-            loading = loading,
-            enabled = !loading,
-            onClick = {
+        BottomActionCard(
+            buttonText = "Submit",
+            onClick =  {
                 showErrors = true
                 if (isFormValid) onSubmit()
                 else scrollToFirstError()
             },
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(16.dp)
+            modifier = Modifier.align(Alignment.BottomCenter),
+            loading = loading,
+            enabled = !loading,
         )
+
+
     }
 }
 

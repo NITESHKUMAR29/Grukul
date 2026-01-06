@@ -1,5 +1,6 @@
 package com.example.feature_class.presentation
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.core_common.resut.UiState
@@ -32,19 +33,32 @@ class ClassListViewModel @Inject constructor(
         ALL, ACTIVE, INACTIVE
     }
 
+    enum class BatchStatusFilter {
+        ALL, ONGOING, UPCOMING
+    }
+
     // -------------------- UI Inputs --------------------
 
     private val searchQuery = MutableStateFlow("")
     val searchText = searchQuery.asStateFlow()
 
-    private val genderFilter = MutableStateFlow("ALL")
+    private val genderFilter = MutableStateFlow("All")
     val selectedGender = genderFilter.asStateFlow()
+
+
+
+    private val _isRefreshing = MutableStateFlow(false)
+    val isRefreshing = _isRefreshing.asStateFlow()
+
+    private val _selectedDay = MutableStateFlow<Int?>(null)
+    val selectedDay = _selectedDay.asStateFlow()
 
     private val statusFilter = MutableStateFlow(StatusFilter.ALL)
     val selectedStatus = statusFilter.asStateFlow()
 
-    private val _isRefreshing = MutableStateFlow(false)
-    val isRefreshing = _isRefreshing.asStateFlow()
+    private val batchStatusFilter = MutableStateFlow(BatchStatusFilter.ALL)
+    val selectedBatchStatus = batchStatusFilter.asStateFlow()
+
 
     // -------------------- UI State --------------------
 
@@ -58,25 +72,54 @@ class ClassListViewModel @Inject constructor(
             ?: throw IllegalStateException("User not logged in"))
     }
     @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
-    private val filteredClassesFlow = createdByFlow.flatMapLatest { createdBy ->
-        combine(
-            observeClassesUseCase(createdBy),
-            searchQuery.debounce(400).distinctUntilChanged(),
-            genderFilter,
-            statusFilter
-        ) { classes, query, gender, status ->
+    private val filteredClassesFlow =
+        createdByFlow.flatMapLatest { createdBy ->
 
-            classes
-                .filter { it.className.contains(query, ignoreCase = true) }
-                .filter { gender == "ALL" || it.gender == gender }
-                .filter {
-                    when (status) {
-                        StatusFilter.ALL -> true
-                        StatusFilter.ACTIVE -> it.isActive
-                        StatusFilter.INACTIVE -> !it.isActive
+            combine(
+                observeClassesUseCase(createdBy),
+                filterState
+            ) { classes, filter ->
+
+                val now = System.currentTimeMillis()
+
+                classes
+                    .filter { it.className.contains(filter.query, ignoreCase = true) }
+                    .filter { filter.gender == "All" || it.gender == filter.gender }
+                    .filter {
+                        when (filter.status) {
+                            StatusFilter.ALL -> true
+                            StatusFilter.ACTIVE -> it.isActive
+                            StatusFilter.INACTIVE -> !it.isActive
+                        }
                     }
-                }
+                    .filter { filter.day == null || it.days.contains(filter.day) }
+                    .filter {
+                        when (filter.batchStatus) {
+                            BatchStatusFilter.ALL -> true
+                            BatchStatusFilter.ONGOING ->
+                                now in it.startDate..it.endDate
+                            BatchStatusFilter.UPCOMING ->
+                                now < it.startDate
+                        }
+                    }
+            }
         }
+
+    @OptIn(FlowPreview::class)
+    private val filterState = combine(
+        searchQuery.debounce(400).distinctUntilChanged(),
+        genderFilter,
+        statusFilter,
+        selectedDay,
+        selectedBatchStatus
+    ) { query, gender, status, day, batchStatus ->
+        ClassFilterState(
+            query = query,
+            gender = gender,
+            status = status,
+            day = day,
+            batchStatus = batchStatus
+        )
     }
 
     init {
@@ -128,11 +171,28 @@ class ClassListViewModel @Inject constructor(
         statusFilter.value = filter
     }
 
+    fun changeBatchStatusFilter(filter: BatchStatusFilter) {
+        batchStatusFilter.value = filter
+    }
+
     fun selectGender(gender: String) {
         genderFilter.value = gender
     }
 
+    fun selectDay(day: Int?) {
+        Log.d("ViewModel", "selectDay called with: $day")
+        _selectedDay.value = day
+    }
+
 }
+
+data class ClassFilterState(
+    val query: String,
+    val gender: String,
+    val status: ClassListViewModel.StatusFilter,
+    val day: Int?,
+    val batchStatus: ClassListViewModel.BatchStatusFilter
+)
 
 
 

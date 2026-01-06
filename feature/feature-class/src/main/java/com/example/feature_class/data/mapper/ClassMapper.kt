@@ -14,8 +14,11 @@ class ClassMapper @Inject constructor() {
             isActive = entity.isActive,
             gender = entity.gender,
             address = entity.address,
-            schedule = entity.schedule,
-            createdBy = entity.createdBy
+            createdBy = entity.createdBy,
+            days = entity.days,
+            startDate = entity.startDate,
+            endDate = entity.endDate,
+            createdAt = entity.updatedAt
         )
 
     fun domainToEntity(model: ClassModel): ClassEntity =
@@ -27,7 +30,9 @@ class ClassMapper @Inject constructor() {
             gender = model.gender,
             address = model.address,
             createdBy = model.createdBy,
-            schedule = model.schedule,
+            days = model.days,
+            startDate = model.startDate,
+            endDate = model.endDate,
             updatedAt = System.currentTimeMillis()
         )
 }

@@ -12,10 +12,11 @@ data class ClassEntity(
     val gender: String,
     val address: String,
     val createdBy: String,
+    val days: List<Int>,
+    val startDate: Long,
+    val endDate: Long,
     val updatedAt: Long,
-    val schedule: String,
-    val isDeleted: Boolean = false,
-    val pendingAction: PendingAction? = null
+    val isDeleted: Boolean = false
 )
 
 enum class PendingAction {

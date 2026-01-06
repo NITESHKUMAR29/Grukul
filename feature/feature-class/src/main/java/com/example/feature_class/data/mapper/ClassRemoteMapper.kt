@@ -15,8 +15,11 @@ class ClassRemoteMapper @Inject constructor() {
             gender = dto.gender,
             address = dto.address,
             createdBy = dto.createdBy,
-            schedule = dto.schedule,
-            updatedAt = dto.updatedAt
+            days = dto.days,
+            startDate = dto.startDate,
+            endDate = dto.endDate,
+            updatedAt = dto.updatedAt,
+            isDeleted = dto.isDeleted
         )
 
     fun entityToDto(entity: ClassEntity): ClassRemoteDto =
@@ -28,8 +31,10 @@ class ClassRemoteMapper @Inject constructor() {
             gender = entity.gender,
             address = entity.address,
             createdBy = entity.createdBy,
+            days = entity.days,
+            startDate = entity.startDate,
+            endDate = entity.endDate,
             updatedAt = entity.updatedAt,
-            schedule = entity.schedule,
-            isDeleted = false
+            isDeleted = entity.isDeleted
         )
 }

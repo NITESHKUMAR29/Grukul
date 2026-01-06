@@ -1,0 +1,18 @@
+package com.example.core_database.converter
+
+
+import androidx.room.TypeConverter
+
+class Converters {
+
+    @TypeConverter
+    fun fromIntList(value: List<Int>?): String {
+        return value?.joinToString(",") ?: ""
+    }
+
+    @TypeConverter
+    fun toIntList(value: String?): List<Int> {
+        if (value.isNullOrBlank()) return emptyList()
+        return value.split(",").map { it.toInt() }
+    }
+}
