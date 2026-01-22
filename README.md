@@ -1,6 +1,6 @@
-# Gurukul – Offline-First School Management App (Android)
+# Gurukul – School Management App (Android)
 
-Gurukul is a modern **offline-first Android application** designed to manage school data such as **Classes and Students** efficiently.  
+Gurukul is a modern **Android application** designed to manage school data such as **Classes and Students** efficiently.  
 It follows **Clean Architecture + MVVM**, uses **Jetpack Compose** for UI, **Room** for local caching, and **Firebase Firestore** as the remote backend.
 
 ---
