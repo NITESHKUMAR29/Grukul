@@ -655,7 +655,9 @@ fun ClassRow(
 ) {
     val weekDayMap = mapOf(1 to "M", 2 to "T", 3 to "W", 4 to "Th", 5 to "F", 6 to "S", 7 to "Su")
 
-    val formattedDays = classModel.days
+    val formattedDays = classModel.schedules
+        .map { it.day }
+        .distinct()
         .sorted()
         .mapNotNull { weekDayMap[it] }
         .joinToString(", ")

@@ -16,7 +16,7 @@ class ClassMapper @Inject constructor() {
             address = entity.address,
             description = entity.description,
             createdBy = entity.createdBy,
-            days = entity.days,
+            schedules = entity.schedules,
             startDate = entity.startDate,
             endDate = entity.endDate,
             createdAt = entity.updatedAt
@@ -32,7 +32,7 @@ class ClassMapper @Inject constructor() {
             address = model.address,
             description = model.description,
             createdBy = model.createdBy,
-            days = model.days,
+            schedules = model.schedules,
             startDate = model.startDate,
             endDate = model.endDate,
             updatedAt = System.currentTimeMillis()

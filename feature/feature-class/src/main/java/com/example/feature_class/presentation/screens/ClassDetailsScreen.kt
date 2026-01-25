@@ -45,6 +45,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.core_model.models.ClassSchedule
 import com.example.core_ui.components.buttons.BottomActionCard
 import com.example.core_ui.components.toolBars.ActionToolbar
 import com.example.core_ui.ui.theme.GurukulTheme
@@ -100,7 +101,7 @@ fun ClassDetailsScreen(
                 item { InstructorCard(classModel.teacherName) }
                 item { Spacer(Modifier.height(16.dp)) }
 
-                item { WeeklyScheduleCard(classModel.days) }
+                item { WeeklyScheduleCard(classModel.schedules.map { it.day }) }
                 item { Spacer(Modifier.height(16.dp)) }
 
                 item { AboutCourseCard(classModel.description) }
@@ -427,7 +428,7 @@ fun ClassDetailsPreview() {
                 isActive = true,
                 address = "Gurukul Campus, Madhubani, Bihar 847231",
                 description = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-                days = listOf(3, 4, 5)
+                schedules = listOf(ClassSchedule(day = 1), ClassSchedule(day = 2))
             ),
             onBack = {},
             onEdit = {},

@@ -2,6 +2,7 @@ package com.example.core_database.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.example.core_model.models.ClassSchedule
 
 @Entity(tableName = "classes")
 data class ClassEntity(
@@ -13,15 +14,10 @@ data class ClassEntity(
     val address: String,
     val description: String,
     val createdBy: String,
-    val days: List<Int>,
+    val schedules: List<ClassSchedule>,
     val startDate: Long,
     val endDate: Long,
     val updatedAt: Long,
     val isDeleted: Boolean = false
 )
 
-enum class PendingAction {
-    DELETE,
-    CREATE,
-    UPDATE
-}

@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.core_common.resut.UiState
+import com.example.core_model.models.ClassSchedule
 import com.example.feature_auth.domain.repositories.UserLocalRepository
 import com.example.feature_class.domain.models.ClassModel
 import com.example.feature_class.domain.repository.ClassRepository
@@ -27,13 +28,15 @@ class ClassViewModel @Inject constructor(
     private val classRepository: ClassRepository
 ) : ViewModel() {
 
+
     private val _getClassDetailsState =
-        MutableStateFlow<UiState<ClassModel>>(UiState.Loading)
+        MutableStateFlow<UiState<ClassModel>>(UiState.Idle)
     val getClassState = _getClassDetailsState.asStateFlow()
 
     private val _createClassState =
         MutableStateFlow<UiState<Unit>>(UiState.Idle)
     val createClassState = _createClassState.asStateFlow()
+
 
     fun createClass(
         className: String,
@@ -42,7 +45,7 @@ class ClassViewModel @Inject constructor(
         gender: String,
         address: String,
         about: String,
-        days: List<Int>,
+        schedules: List<ClassSchedule>,
         startDate: Long,
         endDate: Long
     ) {
@@ -53,6 +56,8 @@ class ClassViewModel @Inject constructor(
                 val userId = userLocalRepository.observeUserId().first()
                     ?: throw IllegalStateException("User not logged in")
 
+
+
                 val classModel = ClassModel(
                     id = UUID.randomUUID().toString(),
                     className = className,
@@ -62,10 +67,14 @@ class ClassViewModel @Inject constructor(
                     address = address,
                     description = about,
                     createdBy = userId,
-                    days = days,
+                    schedules = schedules,
                     startDate = startDate,
-                    endDate = endDate
+                    endDate = endDate,
+                    createdAt = System.currentTimeMillis(),
+                    updatedAt = System.currentTimeMillis()
                 )
+
+
                 Log.d("ClassViewModelClassData", "createClass: $classModel")
 
                 createClassUseCase(classModel)
@@ -74,10 +83,12 @@ class ClassViewModel @Inject constructor(
                 _createClassState.value = UiState.Success(Unit)
             } catch (e: Exception) {
                 _createClassState.value =
-                    UiState.Error(e.message ?: "Create failed")
+                    UiState.Error(e.message ?: "Failed to create class")
             }
         }
     }
+
+    // -------------------- UPDATE CLASS --------------------
 
     fun updateClass(
         classId: String,
@@ -87,14 +98,14 @@ class ClassViewModel @Inject constructor(
         gender: String,
         address: String,
         about: String,
-        days: List<Int>,
+        schedules: List<ClassSchedule>,
         startDate: Long,
         endDate: Long
     ) {
         viewModelScope.launch {
-            _createClassState.value = UiState.Loading
-
             try {
+                _createClassState.value = UiState.Loading
+
 
                 val existing = classRepository.getClassById(classId)
 
@@ -105,13 +116,15 @@ class ClassViewModel @Inject constructor(
                     gender = gender,
                     address = address,
                     description = about,
-                    days = days,
+                    schedules = schedules,
                     startDate = startDate,
                     endDate = endDate,
                     updatedAt = System.currentTimeMillis()
                 )
 
                 classRepository.updateClass(updatedClass)
+
+                // Sync latest data from Firebase
                 classRepository.syncClasses(existing.createdBy)
 
                 _createClassState.value = UiState.Success(Unit)
@@ -126,6 +139,7 @@ class ClassViewModel @Inject constructor(
     fun loadClass(classId: String) {
         viewModelScope.launch {
             try {
+                _getClassDetailsState.value = UiState.Loading
                 val classModel = getClassByIdUseCase(classId)
                 _getClassDetailsState.value = UiState.Success(classModel)
             } catch (e: Exception) {
@@ -133,5 +147,10 @@ class ClassViewModel @Inject constructor(
                     UiState.Error(e.message ?: "Failed to load class")
             }
         }
+    }
+
+
+    fun resetCreateState() {
+        _createClassState.value = UiState.Idle
     }
 }

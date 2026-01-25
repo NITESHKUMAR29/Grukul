@@ -92,7 +92,11 @@ class ClassListViewModel @Inject constructor(
                             StatusFilter.INACTIVE -> !it.isActive
                         }
                     }
-                    .filter { filter.day == null || it.days.contains(filter.day) }
+                    .filter {
+                        filter.day == null ||
+                                it.schedules.any { schedule -> schedule.day == filter.day }
+                    }
+
                     .filter {
                         when (filter.batchStatus) {
                             BatchStatusFilter.ALL -> true

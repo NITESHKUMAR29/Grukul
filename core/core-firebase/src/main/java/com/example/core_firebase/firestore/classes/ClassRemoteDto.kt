@@ -1,5 +1,7 @@
 package com.example.core_firebase.firestore.classes
 
+import com.example.core_model.models.ClassSchedule
+
 data class ClassRemoteDto(
     val id: String = "",
     val className: String = "",
@@ -9,7 +11,7 @@ data class ClassRemoteDto(
     val address: String = "",
     val createdBy: String = "",
     val description: String = "",
-    val days: List<Int> = emptyList(),
+    val schedules: List<ClassSchedule> = emptyList(),
     val startDate: Long = 0L,
     val endDate: Long = 0L,
     val updatedAt: Long = 0L,

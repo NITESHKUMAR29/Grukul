@@ -9,7 +9,7 @@ import com.example.core_database.entity.ClassEntity
 
 @Database(
     entities = [ClassEntity::class],
-    version = 5,
+    version = 6,
     exportSchema = false
 )
 @TypeConverters(Converters::class)

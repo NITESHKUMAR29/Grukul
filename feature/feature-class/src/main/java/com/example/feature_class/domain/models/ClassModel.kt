@@ -1,5 +1,7 @@
 package com.example.feature_class.domain.models
 
+import com.example.core_model.models.ClassSchedule
+
 data class ClassModel(
     val id: String = "",
     val className: String = "",
@@ -8,7 +10,7 @@ data class ClassModel(
     val gender: String = "",
     val address: String = "",
     val createdBy: String = "",
-    val days: List<Int>,
+    val schedules: List<ClassSchedule>,
     val startDate: Long=0,
     val description: String = "",
     val endDate: Long=0,
