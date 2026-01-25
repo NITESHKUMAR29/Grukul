@@ -9,8 +9,14 @@ sealed class BottomNavItem(
 ) {
     object Home : BottomNavItem("home", "Home", R.drawable.baseline_home_24)
     object Classes : BottomNavItem("classes", "Classes", R.drawable.classes_icon)
-    object Add : BottomNavItem("add", "Add", R.drawable.add_icon)
+
+
+    object Add : BottomNavItem(
+        "add_class",
+        "Add",
+        R.drawable.add_icon
+    )
+
     object Students : BottomNavItem("students", "Students", R.drawable.students_icon)
     object Fee : BottomNavItem("fee", "Fee", R.drawable.fee_icon)
-
 }

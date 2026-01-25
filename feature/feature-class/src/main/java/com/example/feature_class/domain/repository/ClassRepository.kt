@@ -12,4 +12,8 @@ interface ClassRepository {
     fun observeClasses(createdBy: String): Flow<List<ClassModel>>
 
     suspend fun syncClasses(createdBy: String)
+
+    suspend fun getClassById(classId: String): ClassModel
+
+    suspend fun updateClass(classModel: ClassModel)
 }

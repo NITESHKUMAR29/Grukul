@@ -20,6 +20,9 @@ object AuthRoutes {
 object MainRoutes {
     const val HOME = "home"
     const val CLASSES = "classes"
+    const val CLASS_DETAILS = "class_details"
+    const val ADD_CLASS = "add_class"
+    const val EDIT_CLASS = "edit_class"
 }
 
 object FormRoutes{

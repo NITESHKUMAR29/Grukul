@@ -11,18 +11,24 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.core_ui.ui.theme.GurukulTheme
-import com.example.feature_class.presentation.ClassFormScreen
+import com.example.feature_class.presentation.screens.ClassFormScreen
 
 @Composable
-fun FormScreenHost(onBack: () -> Unit) {
+fun FormScreenHost(
+    classId: String? = null,
+    onBack: () -> Unit
+) {
     var currentForm by rememberSaveable {
-        mutableStateOf(FormType.CLASS)
+        mutableStateOf(
+            if (classId != null) FormType.CLASS else FormType.CLASS
+        )
     }
 
     FormScreen(
         formType = currentForm,
         onFormChange = { currentForm = it },
-        onBack = onBack
+        onBack = onBack,
+        classId = classId
     )
 }
 
@@ -31,24 +37,35 @@ fun FormScreenHost(onBack: () -> Unit) {
 fun FormScreen(
     formType: FormType,
     onFormChange: (FormType) -> Unit,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    classId: String?
 ) {
     Column {
         FormScreenToolbar(
-            title = if (formType == FormType.CLASS) "New Class" else "New Student",
+            title =
+                if (formType == FormType.CLASS) {
+                    if (classId != null) "Edit Class" else "New Class"
+                } else {
+                    "New Student"
+                },
             showBack = true,
             onBackClick = onBack,
-            showFormToggle = true,
+            showFormToggle = classId == null, // ❗ disable toggle in edit
             currentForm = formType,
             onFormToggle = onFormChange
         )
 
         when (formType) {
-            FormType.CLASS -> ClassFormScreen(onBack = onBack)
+            FormType.CLASS -> ClassFormScreen(
+                classId = classId,
+                onBack = onBack
+            )
+
             FormType.STUDENT -> StudentForm()
         }
     }
 }
+
 
 
 @Composable

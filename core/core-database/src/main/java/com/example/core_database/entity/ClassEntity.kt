@@ -11,6 +11,7 @@ data class ClassEntity(
     val isActive: Boolean,
     val gender: String,
     val address: String,
+    val description: String,
     val createdBy: String,
     val days: List<Int>,
     val startDate: Long,

@@ -12,5 +12,6 @@ data class ClassModel(
     val startDate: Long=0,
     val description: String = "",
     val endDate: Long=0,
-    val createdAt: Long = System.currentTimeMillis()
+    val createdAt: Long = System.currentTimeMillis(),
+    val updatedAt: Long = System.currentTimeMillis()
 )

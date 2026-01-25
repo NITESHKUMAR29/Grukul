@@ -1,4 +1,4 @@
-package com.example.feature_class.presentation
+package com.example.feature_class.presentation.screens
 
 import android.util.Log
 import androidx.lifecycle.ViewModel

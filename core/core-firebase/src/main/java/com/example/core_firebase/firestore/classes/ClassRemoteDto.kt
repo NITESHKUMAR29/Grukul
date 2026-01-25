@@ -8,6 +8,7 @@ data class ClassRemoteDto(
     val gender: String = "",
     val address: String = "",
     val createdBy: String = "",
+    val description: String = "",
     val days: List<Int> = emptyList(),
     val startDate: Long = 0L,
     val endDate: Long = 0L,

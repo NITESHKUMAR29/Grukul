@@ -2,6 +2,7 @@ package com.example.core_firebase.firestore.classes
 
 
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -21,10 +22,19 @@ class FirebaseClassDataSource @Inject constructor(
             }
     }
 
+
+
     suspend fun createClass(dto: ClassRemoteDto) {
         firestore.collection("classes")
             .document(dto.id)
             .set(dto)
+            .await()
+    }
+
+    suspend fun updateClass(dto: ClassRemoteDto) {
+        firestore.collection("classes")
+            .document(dto.id)
+            .set(dto, SetOptions.merge())
             .await()
     }
     suspend fun softDeleteClass(id: String) {

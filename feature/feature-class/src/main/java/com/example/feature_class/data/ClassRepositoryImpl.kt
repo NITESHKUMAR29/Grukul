@@ -45,4 +45,22 @@ class ClassRepositoryImpl @Inject constructor(
 
         classDao.replaceAllForUser(createdBy, entities)
     }
+
+    override suspend fun getClassById(classId: String): ClassModel {
+        val entity = classDao.getClassById(classId)
+
+        return entity?.let {
+            mapper.entityToDomain(it)
+        } ?: throw IllegalStateException("Class not found with id: $classId")
+    }
+
+    override suspend fun updateClass(classModel: ClassModel) {
+        val dto = remoteMapper.entityToDto(
+            mapper.domainToEntity(classModel)
+        )
+        firebaseDataSource.updateClass(dto)
+
+        classDao.upsert(mapper.domainToEntity(classModel))
+    }
+
 }

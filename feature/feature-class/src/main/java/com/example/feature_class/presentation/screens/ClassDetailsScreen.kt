@@ -1,9 +1,12 @@
-package com.example.feature_class.presentation
+package com.example.feature_class.presentation.screens
 
+import android.widget.ScrollView
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -19,6 +23,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -27,6 +32,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -46,9 +55,11 @@ fun ClassDetailsScreen(
     classModel: ClassModel,
     onBack: () -> Unit,
     onEdit: () -> Unit,
-    onJoinClass: () -> Unit
+    onAddStudent: () -> Unit
 ) {
+    val scrollState = rememberScrollState()
     Box(modifier = Modifier.fillMaxSize()) {
+
 
 
         Column(
@@ -73,41 +84,80 @@ fun ClassDetailsScreen(
 
             Spacer(Modifier.height(12.dp))
 
+
             // Scroll content
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .verticalScroll(rememberScrollState())
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(
+                    top = 12.dp,
+                    bottom = 96.dp //
+                )
             ) {
 
-                ClassHeaderCard(classModel)
+                item { ClassHeaderCard(classModel) }
+                item { Spacer(Modifier.height(16.dp)) }
 
-                Spacer(Modifier.height(16.dp))
+                item { InstructorCard(classModel.teacherName) }
+                item { Spacer(Modifier.height(16.dp)) }
 
-                InstructorCard(classModel.teacherName)
+                item { WeeklyScheduleCard(classModel.days) }
+                item { Spacer(Modifier.height(16.dp)) }
 
-                Spacer(Modifier.height(16.dp))
+                item { AboutCourseCard(classModel.description) }
+                item { Spacer(Modifier.height(16.dp)) }
 
-                AboutCourseCard(classModel.description)
-
-                Spacer(Modifier.height(16.dp))
-
-                WeeklyScheduleCard(classModel.days)
-
-                Spacer(Modifier.height(24.dp))
+                item { AddressCard(classModel.address) }
+                item { Spacer(Modifier.height(24.dp)) }
             }
-
         }
 
+    BottomActionCard(
+        buttonText = "Add Student",
+        onClick = onAddStudent,
+        modifier = Modifier.align(Alignment.BottomCenter)
+    )
+}
+}
 
 
-        BottomActionCard(
-            buttonText = "Add Student",
-            onClick = onJoinClass,
-            modifier = Modifier.align(Alignment.BottomCenter)
-        )
+@Composable
+fun AddressCard(address: String) {
+    Card(
+        modifier = Modifier
+            .padding(horizontal = 16.dp)
+            .fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
+        Column(Modifier.padding(16.dp)) {
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.Default.LocationOn,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary
+                )
+                Spacer(Modifier.width(8.dp))
+                Text(
+                    text = "Address",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
+
+            Spacer(Modifier.height(8.dp))
+
+            Text(
+                text = address.ifBlank { "No address provided." },
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
     }
-
 }
 
 
@@ -133,7 +183,7 @@ fun ClassHeaderCard(classModel: ClassModel) {
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = "Subject",
+                    text = "Batch Name",
                     color = Color.White.copy(alpha = 0.8f),
                     style = MaterialTheme.typography.labelMedium
                 )
@@ -239,6 +289,7 @@ fun InstructorCard(name: String) {
 
 @Composable
 fun AboutCourseCard(description: String) {
+    var expanded by remember { mutableStateOf(false) }
     Card(
         modifier = Modifier
             .padding(horizontal = 16.dp)
@@ -263,17 +314,23 @@ fun AboutCourseCard(description: String) {
                 text = description.ifBlank { "No description available." },
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                maxLines = 3,
-                overflow =  TextOverflow.Ellipsis
+                maxLines = if (expanded) Int.MAX_VALUE else 3,
+                overflow = if (expanded) TextOverflow.Clip else TextOverflow.Ellipsis
             )
 
             Spacer(Modifier.height(6.dp))
 
-            Text(
-                text = "Read more",
-                color = MaterialTheme.colorScheme.primary,
-                style = MaterialTheme.typography.labelMedium
-            )
+            if (description.length > 120) {
+                Spacer(Modifier.height(6.dp))
+
+                Text(
+                    text = if (expanded) "Read less" else "Read more",
+                    color = MaterialTheme.colorScheme.primary,
+                    style = MaterialTheme.typography.labelMedium,
+                    modifier = Modifier
+                        .clickable { expanded = !expanded }
+                )
+            }
         }
     }
 }
@@ -368,12 +425,13 @@ fun ClassDetailsPreview() {
                 teacherName = "Nitesh",
                 gender = "Boys Only",
                 isActive = true,
+                address = "Gurukul Campus, Madhubani, Bihar 847231",
                 description = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
                 days = listOf(3, 4, 5)
             ),
             onBack = {},
             onEdit = {},
-            onJoinClass = {}
+            onAddStudent = {}
         )
     }
 

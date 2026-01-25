@@ -8,9 +8,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import androidx.navigation.navArgument
 import com.example.core_ui.SumanjeetScreen
 import com.example.core_ui.components.navigationBar.BottomNavItem
 import com.example.core_ui.ui.toast.ToastState
@@ -19,7 +21,8 @@ import com.example.feature_auth.presentation.NameInputScreen
 import com.example.feature_auth.presentation.OtpScreen
 import com.example.feature_auth.presentation.PhoneInputScreen
 import com.example.feature_auth.presentation.SelectRoleScreen
-import com.example.feature_class.presentation.ClassScreen
+import com.example.feature_class.presentation.screens.ClassDetailsScreenRoute
+import com.example.feature_class.presentation.screens.ClassScreen
 import com.example.feature_home.presentation.FormScreenHost
 import com.example.gurukul.splash.SplashScreen
 
@@ -128,16 +131,49 @@ fun GurukulNavGraph(
                 SumanjeetScreen()
             }
             composable(MainRoutes.CLASSES) {
-                ClassScreen()
-            }
-            composable(BottomNavItem.Add.route) {
-                FormScreenHost(
-                    onBack = {
-                        Log.d("onBackClicked","onbackClicked")
-                        navController.popBackStack()
+                ClassScreen(
+                    onClassClick = { classId ->
+                        navController.navigate("${MainRoutes.CLASS_DETAILS}/$classId")
                     }
                 )
             }
+
+            composable(
+                route = "${MainRoutes.CLASS_DETAILS}/{classId}"
+            ) { backStackEntry ->
+                val classId = backStackEntry.arguments?.getString("classId")!!
+
+                ClassDetailsScreenRoute(
+                    classId = classId,
+                    onBack = { navController.popBackStack() },
+                    onEdit = {
+                        navController.navigate(
+                            "${MainRoutes.ADD_CLASS}?classId=$classId"
+                        )
+                    },
+                    onAddStudent = { navController.navigate(BottomNavItem.Add.route) }
+                )
+            }
+
+
+            composable(
+                route = "${MainRoutes.ADD_CLASS}?classId={classId}",
+                arguments = listOf(
+                    navArgument("classId") {
+                        type = NavType.StringType
+                        nullable = true
+                        defaultValue = null
+                    }
+                )
+            ) { backStackEntry ->
+                val classId = backStackEntry.arguments?.getString("classId")
+
+                FormScreenHost(
+                    classId = classId,
+                    onBack = { navController.popBackStack() }
+                )
+            }
+
             composable(BottomNavItem.Students.route) { }
             composable(BottomNavItem.Fee.route) { }
         }
